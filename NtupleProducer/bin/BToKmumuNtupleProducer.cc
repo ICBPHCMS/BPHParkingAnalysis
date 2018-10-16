@@ -8,6 +8,15 @@
 
 #include "NanoAODTree.h"
 
+#include "tensorflow/core/framework/graph.pb.h"
+#include "tensorflow/core/framework/tensor.h"
+
+#include "tensorflow/core/public/session.h"
+#include "tensorflow/core/framework/tensor.h"
+#include "tensorflow/core/lib/io/path.h"
+
+#include "tensorflow/core/graph/default_device.h"
+
 
 float JPsiMass_ = 3.0969;
 float BuMass_ = 5.279;
@@ -111,6 +120,21 @@ int main(int argc, char** argv) {
       break;
     }
   }
+  
+  bool addNNBMX = false;
+  std::string nnBMXModelFile;
+  for (int i = 1; i < argc; ++i) {
+    if(std::string(argv[i]) == "--addNNBMX") {
+      if (i + 1 < argc) {
+        addNNBMX = true;
+        nnBMXModelFile = argv[i+1];
+        break;
+      } else {
+	    std::cerr << "--addNNBMX option requires one argument." << std::endl;
+        return 1;
+      }
+    }
+  }
 
 
   //Always saveFullNanoAOD info because we are skimming
@@ -210,6 +234,32 @@ int main(int argc, char** argv) {
 
     tree_new->Branch("Muon_isHLT_BPHParking",_Muon_isHLT_BPHParking,"Muon_isHLT_BPHParking[nMuon]/O");
 
+  }
+  
+  float nnBMX = -1;
+  tensorflow::GraphDef nnBMXGraphDef;
+  tensorflow::Session* session;
+  
+  if (addNNBMX)
+  {
+    tree_new->Branch("nnBMX",&nnBMX,"nnBMX/F");
+    
+    tensorflow::Status status;
+    // load it
+    status = ReadBinaryProto(tensorflow::Env::Default(), nnBMXModelFile.c_str(), &nnBMXGraphDef);
+    tensorflow::graph::SetDefaultDevice("/cpu:0", &nnBMXGraphDef);
+    // check for success
+    if (!status.ok())
+    {
+        std::cerr<<"InvalidGraphDef: error while loading graph def: "+status.ToString()<<std::endl;
+        return 1;
+    }
+    tensorflow::SessionOptions opts;
+    opts.config.set_intra_op_parallelism_threads(1);
+    opts.config.set_inter_op_parallelism_threads(1);
+    TF_CHECK_OK(tensorflow::NewSession(opts, &session));
+    TF_CHECK_OK(session->Create(nnBMXGraphDef));
+    
   }
 
 
@@ -624,6 +674,163 @@ int main(int argc, char** argv) {
 
     if(isBPHParking){
       _Muon_probe_index = _Muon_sel_index;
+    }
+    
+    auto deltaPhiFct = [](float phi1, float phi2) -> float
+    {
+        if (fabs(phi1-phi2)<2*M_PI) return fabs(phi1-phi2);
+        int n = int(std::round((phi1-phi2)/(2*M_PI)));
+        return fabs((phi1-phi2)-n*2*M_PI);
+    };
+    
+    auto deltaRFct = [deltaPhiFct](float eta1, float phi1,  float eta2, float phi2) -> float
+    {
+        const float dEta = (eta1-eta2);
+        const float dPhi = deltaPhiFct(phi1,phi2);
+        return std::sqrt(dEta*dEta+dPhi*dPhi);
+    };
+    
+    auto closestJet = [deltaPhiFct](const NanoAODTree& tree, float eta, float phi) -> float
+    {
+        float minDR2 = 100.;
+        for (uint ijet = 0; ijet<tree.nJet; ++ijet)
+        {
+            if (tree.Jet_pt[ijet]<20.) continue;
+            if (fabs(tree.Jet_eta[ijet])>5.0) continue;
+            const float dEta = eta-tree.Jet_eta[ijet];
+            const float dPhi = deltaPhiFct(phi,tree.Jet_phi[ijet]);
+            const float dr2 = dEta*dEta+dPhi*dPhi;
+            minDR2 = std::min(minDR2,dr2);
+        }
+        return std::sqrt(minDR2);
+    };
+    
+    auto resetNAN = [](float value) -> float
+    {
+        if (std::isnan(value) or std::isinf(value)) return 0;
+        return value;
+    };
+    
+
+     
+    if (addNNBMX)
+    {
+        const std::vector<std::function<float(const NanoAODTree&,int)>> featureExtractors = {{
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-5+tree.Muon_pfRelIso03_all[tree.BToKmumu_mu1_index[icomb]]);},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-5+tree.Muon_pfRelIso03_all[tree.BToKmumu_mu2_index[icomb]]);},
+            
+            [deltaRFct](const NanoAODTree& tree,int icomb) { return deltaRFct(
+                tree.BToKmumu_mu1_eta[icomb],tree.BToKmumu_mu1_phi[icomb],
+                tree.BToKmumu_mu2_eta[icomb],tree.BToKmumu_mu2_phi[icomb]
+            );},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(
+                1e-10+fabs(tree.Muon_dxy[tree.BToKmumu_mu1_index[icomb]]-tree.Muon_dxy[tree.BToKmumu_mu2_index[icomb]])
+            );},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(
+                1e-10+fabs(tree.Muon_dz[tree.BToKmumu_mu1_index[icomb]]-tree.Muon_dz[tree.BToKmumu_mu2_index[icomb]])
+            );},
+            
+            [deltaRFct](const NanoAODTree& tree,int icomb) { return deltaRFct(
+                tree.BToKmumu_mu1_eta[icomb],tree.BToKmumu_mu1_phi[icomb],
+                tree.BToKmumu_kaon_eta[icomb],tree.BToKmumu_kaon_phi[icomb]
+            );},
+            [deltaRFct](const NanoAODTree& tree,int icomb) { return deltaRFct(
+                tree.BToKmumu_mu2_eta[icomb],tree.BToKmumu_mu2_phi[icomb],
+                tree.BToKmumu_kaon_eta[icomb],tree.BToKmumu_kaon_phi[icomb]
+            );},
+            
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-10+tree.BToKmumu_kaon_pt[icomb]/tree.BToKmumu_mu1_pt[icomb]);},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-10+tree.BToKmumu_kaon_pt[icomb]/tree.BToKmumu_mu2_pt[icomb]);},
+            
+            [](const NanoAODTree& tree,int icomb) { return std::log10(
+                1e-10+fabs(tree.BToKmumu_kaon_dxy[icomb]-tree.Muon_dxy[tree.BToKmumu_mu1_index[icomb]])
+            );},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(
+                1e-10+fabs(tree.BToKmumu_kaon_dxy[icomb]-tree.Muon_dxy[tree.BToKmumu_mu2_index[icomb]])
+            );},
+            
+            
+            [](const NanoAODTree& tree,int icomb) { return std::log10(
+                1e-10+fabs(tree.BToKmumu_kaon_dz[icomb]-tree.Muon_dz[tree.BToKmumu_mu1_index[icomb]])
+            );},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(
+                1e-10+fabs(tree.BToKmumu_kaon_dz[icomb]-tree.Muon_dz[tree.BToKmumu_mu2_index[icomb]])
+            );},
+            
+            [](const NanoAODTree& tree,int icomb) { return std::log10(std::max(0.1f,tree.BToKmumu_kaon_pt[icomb]));},
+            
+            [](const NanoAODTree& tree,int icomb) { return fabs(tree.BToKmumu_kaon_eta[icomb]);},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-10+fabs(tree.BToKmumu_kaon_dxy[icomb]));},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-10+fabs(tree.BToKmumu_kaon_dz[icomb]));},
+            
+            [closestJet](const NanoAODTree& tree,int icomb) { return std::log10(
+                1e-10+closestJet(tree,tree.BToKmumu_kaon_eta[icomb],tree.BToKmumu_kaon_phi[icomb])
+            );},
+            
+            [](const NanoAODTree& tree,int icomb) { return std::log10(std::max(0.1f,tree.BToKmumu_pt[icomb]));},
+            [](const NanoAODTree& tree,int icomb) { return fabs(tree.BToKmumu_eta[icomb]);},
+            
+            [](const NanoAODTree& tree,int icomb) { return std::acos(std::max(std::min(tree.BToKmumu_cosAlpha[icomb],-1.f),1.f));},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-10+tree.BToKmumu_Lxy[icomb]);},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(1e-10+tree.BToKmumu_ctxy[icomb]);},
+            [](const NanoAODTree& tree,int icomb) { return std::log10(std::max(1e-5f,tree.BToKmumu_CL_vtx[icomb]));}
+        }};
+    
+        //simple preselection for speedup 
+        if (tree->nBToKmumu==0 or _BToKmumu_sel_index<0 or best_B_CL_vtx<1e-5)
+        {
+            nnBMX = -1;
+        }
+        else
+        {
+            tensorflow::Tensor feature_tensor(tensorflow::DT_FLOAT, {1,200,24});
+            auto features = feature_tensor.tensor<float,3>();
+            std::vector<std::pair<int,float>> combinationVtxPairList;
+            for (size_t icomb = 0; icomb < tree->nBToKmumu; ++icomb)
+            {
+                if (tree->BToKmumu_mu1_pt[icomb]<1. or fabs(tree->BToKmumu_mu1_eta[icomb])>2.4) continue;
+                if (tree->BToKmumu_mu2_pt[icomb]<1. or fabs(tree->BToKmumu_mu2_eta[icomb])>2.4) continue;
+                if (tree->BToKmumu_kaon_pt[icomb]<1. or fabs(tree->BToKmumu_kaon_eta[icomb])>2.4) continue;
+                combinationVtxPairList.emplace_back(icomb,tree->BToKmumu_CL_vtx[icomb]);
+            }
+            std::sort(combinationVtxPairList.begin(),combinationVtxPairList.end(),
+                [](const auto& p1, const auto& p2)
+                {
+                    return p1.second>p2.second;
+                }
+            );
+            
+            //write the tensor sorted by CL vtx
+            for (int64_t icomb = 0; icomb < std::min<int64_t>(200,combinationVtxPairList.size()); ++icomb)
+            {
+                for (int64_t ifeat = 0; ifeat < (int64_t)featureExtractors.size(); ++ifeat)
+                {
+                    features(0,icomb,ifeat) = resetNAN(featureExtractors[ifeat](*tree,combinationVtxPairList[icomb].first));
+                }
+                
+            }
+            //padding
+            for (int64_t icomb = std::min<int64_t>(200,combinationVtxPairList.size()); icomb < 200; ++icomb)
+            {
+                for (int64_t ifeat = 0; ifeat < (int64_t)featureExtractors.size(); ++ifeat)
+                {
+                    features(0,icomb,ifeat) = 0;
+                }
+            }
+            
+            std::vector<tensorflow::Tensor> outputs; 
+            TF_CHECK_OK(session->Run(
+                {
+                    {"features",feature_tensor},
+                    
+                }, //input map
+                {"prediction"}, //output node names 
+                {}, //additional nodes run but not put in outputs
+                &outputs
+            ));
+            auto tensor_flat =  outputs[0].flat<float>();
+            nnBMX = tensor_flat(0);
+        }
     }
 
 

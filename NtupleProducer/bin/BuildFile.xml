@@ -4,6 +4,7 @@
 
 <bin name="BToKmumuNtupleProducer" file="BToKmumuNtupleProducer.cc">
     <use name="root" />
+    <use name="tensorflow-cc" />
 </bin>
 
 <bin name="BToKeeNtupleProducer" file="BToKeeNtupleProducer.cc">
