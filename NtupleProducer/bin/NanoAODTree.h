@@ -27,6 +27,7 @@ const int kBToKeeMax = 50000;
 const int kGenPartMax = 10000;
 const int kTrigObjMax = 1000;
 const int kPFCandMax = 10000;
+const int kJetMax = 100;
 
 using namespace std;
 
@@ -48,6 +49,7 @@ public :
    float Muon_dxy[kMuonMax];
    float Muon_dz[kMuonMax];
    float Muon_pfRelIso04_all[kMuonMax];
+   float Muon_pfRelIso03_all[kMuonMax];
    bool Muon_softId[kMuonMax];
    bool Muon_mediumId[kMuonMax];
 
@@ -59,6 +61,11 @@ public :
    float Electron_mass[kElectronMax];
    float Electron_dxy[kElectronMax];
    float Electron_dz[kElectronMax];
+   
+   uint nJet;
+   float Jet_pt[kJetMax];
+   float Jet_eta[kJetMax];
+   float Jet_phi[kJetMax];
 
    uint nBToKpipi;
    float BToKpipi_CL_vtx[kBToKpipiMax];
@@ -84,6 +91,9 @@ public :
  
    uint nBToKmumu;
    float BToKmumu_CL_vtx[kBToKmumuMax];
+   float BToKmumu_Lxy[kBToKmumuMax];
+   float BToKmumu_ctxy[kBToKmumuMax];
+   float BToKmumu_cosAlpha[kBToKmumuMax];
    float BToKmumu_mumu_CL_vtx[kBToKmumuMax];
    float BToKmumu_mumu_mass[kBToKmumuMax];
    float BToKmumu_mass[kBToKmumuMax];
@@ -91,6 +101,8 @@ public :
    float BToKmumu_kaon_pt[kBToKmumuMax];
    float BToKmumu_kaon_eta[kBToKmumuMax];
    float BToKmumu_kaon_phi[kBToKmumuMax];
+   float BToKmumu_kaon_dxy[kBToKmumuMax];
+   float BToKmumu_kaon_dz[kBToKmumuMax];
    float BToKmumu_mu1_pt[kBToKmumuMax];
    int BToKmumu_mu1_charge[kBToKmumuMax];
    float BToKmumu_mu1_eta[kBToKmumuMax];
@@ -101,10 +113,14 @@ public :
    float BToKmumu_mu2_eta[kBToKmumuMax];
    float BToKmumu_mu2_phi[kBToKmumuMax];
    int BToKmumu_mu2_index[kBToKmumuMax];
-
+   float BToKmumu_pt[kBToKmumuMax];
+   float BToKmumu_eta[kBToKmumuMax];
 
    uint nBToKee;
    float BToKee_CL_vtx[kBToKeeMax];
+   float BToKee_Lxy[kBToKeeMax];
+   float BToKee_ctxy[kBToKeeMax];
+   float BToKee_cosAlpha[kBToKeeMax];
    float BToKee_ee_CL_vtx[kBToKeeMax];
    float BToKee_ee_mass[kBToKeeMax];
    float BToKee_mass[kBToKeeMax];
@@ -112,6 +128,8 @@ public :
    float BToKee_kaon_pt[kBToKeeMax];
    float BToKee_kaon_eta[kBToKeeMax];
    float BToKee_kaon_phi[kBToKeeMax];
+   float BToKee_kaon_dxy[kBToKeeMax];
+   float BToKee_kaon_dz[kBToKeeMax];
    int BToKee_ele1_index[kBToKeeMax];
    int BToKee_ele1_charge[kBToKeeMax];
    float BToKee_ele1_pt[kBToKeeMax];
@@ -122,6 +140,8 @@ public :
    float BToKee_ele2_pt[kBToKeeMax];
    float BToKee_ele2_eta[kBToKeeMax];
    float BToKee_ele2_phi[kBToKeeMax];
+   float BToKee_pt[kBToKeeMax];
+   float BToKee_eta[kBToKeeMax];
 
    uint nGenPart;
    int GenPart_pdgId[kGenPartMax];
@@ -215,6 +235,7 @@ void NanoAODTree::Init(TChain* tree)
   _tree->SetBranchAddress("Muon_dxy",&Muon_dxy);
   _tree->SetBranchAddress("Muon_dz",&Muon_dz);
   _tree->SetBranchAddress("Muon_pfRelIso04_all",&Muon_pfRelIso04_all);
+  _tree->SetBranchAddress("Muon_pfRelIso03_all",&Muon_pfRelIso03_all);
   _tree->SetBranchAddress("Muon_softId",&Muon_softId);
   _tree->SetBranchAddress("Muon_mediumId",&Muon_mediumId);
 
@@ -226,6 +247,11 @@ void NanoAODTree::Init(TChain* tree)
   _tree->SetBranchAddress("Electron_mass",&Electron_mass);
   _tree->SetBranchAddress("Electron_dxy",&Electron_dxy);
   _tree->SetBranchAddress("Electron_dz",&Electron_dz);
+  
+  _tree->SetBranchAddress("nJet",&nJet); 
+  _tree->SetBranchAddress("Jet_pt",&Jet_pt);  
+  _tree->SetBranchAddress("Jet_eta",&Jet_eta);  
+  _tree->SetBranchAddress("Jet_phi",&Jet_phi);  
 
   int BToKpipi_info = _tree->SetBranchAddress("nBToKpipi",&nBToKpipi);
   if(BToKpipi_info>=0){
@@ -254,6 +280,9 @@ void NanoAODTree::Init(TChain* tree)
   int BToKmumu_info = _tree->SetBranchAddress("nBToKmumu",&nBToKmumu);
   if(BToKmumu_info>=0){
     _tree->SetBranchAddress("BToKmumu_CL_vtx",&BToKmumu_CL_vtx);
+    _tree->SetBranchAddress("BToKmumu_Lxy",&BToKmumu_Lxy);
+    _tree->SetBranchAddress("BToKmumu_ctxy",&BToKmumu_ctxy);
+    _tree->SetBranchAddress("BToKmumu_cosAlpha",&BToKmumu_cosAlpha);
     _tree->SetBranchAddress("BToKmumu_mumu_CL_vtx",&BToKmumu_mumu_CL_vtx);
     _tree->SetBranchAddress("BToKmumu_mumu_mass",&BToKmumu_mumu_mass);
     _tree->SetBranchAddress("BToKmumu_mass",&BToKmumu_mass);
@@ -261,6 +290,8 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("BToKmumu_kaon_pt",&BToKmumu_kaon_pt);
     _tree->SetBranchAddress("BToKmumu_kaon_eta",&BToKmumu_kaon_eta);
     _tree->SetBranchAddress("BToKmumu_kaon_phi",&BToKmumu_kaon_phi);
+    _tree->SetBranchAddress("BToKmumu_kaon_dxy",&BToKmumu_kaon_dxy);
+    _tree->SetBranchAddress("BToKmumu_kaon_dz",&BToKmumu_kaon_dz);
     _tree->SetBranchAddress("BToKmumu_mu1_charge",&BToKmumu_mu1_charge);
     _tree->SetBranchAddress("BToKmumu_mu1_pt",&BToKmumu_mu1_pt);
     _tree->SetBranchAddress("BToKmumu_mu1_eta",&BToKmumu_mu1_eta);
@@ -271,11 +302,16 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("BToKmumu_mu2_eta",&BToKmumu_mu2_eta);
     _tree->SetBranchAddress("BToKmumu_mu2_phi",&BToKmumu_mu2_phi);
     _tree->SetBranchAddress("BToKmumu_mu2_index",&BToKmumu_mu2_index);
+    _tree->SetBranchAddress("BToKmumu_pt",&BToKmumu_pt);
+    _tree->SetBranchAddress("BToKmumu_eta",&BToKmumu_eta);
   }
 
   int BToKee_info = _tree->SetBranchAddress("nBToKee",&nBToKee);
   if(BToKee_info>=0){
     _tree->SetBranchAddress("BToKee_CL_vtx",&BToKee_CL_vtx);
+    _tree->SetBranchAddress("BToKee_Lxy",&BToKee_Lxy);
+    _tree->SetBranchAddress("BToKee_ctxy",&BToKee_ctxy);
+    _tree->SetBranchAddress("BToKee_cosAlpha",&BToKee_cosAlpha);
     _tree->SetBranchAddress("BToKee_ee_CL_vtx",&BToKee_ee_CL_vtx);
     _tree->SetBranchAddress("BToKee_ee_mass",&BToKee_ee_mass);
     _tree->SetBranchAddress("BToKee_mass",&BToKee_mass);
@@ -283,6 +319,8 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("BToKee_kaon_pt",&BToKee_kaon_pt);
     _tree->SetBranchAddress("BToKee_kaon_eta",&BToKee_kaon_eta);
     _tree->SetBranchAddress("BToKee_kaon_phi",&BToKee_kaon_phi);
+    _tree->SetBranchAddress("BToKee_kaon_dxy",&BToKee_kaon_dxy);
+    _tree->SetBranchAddress("BToKee_kaon_dz",&BToKee_kaon_dz);
     _tree->SetBranchAddress("BToKee_ele1_pt",&BToKee_ele1_pt);
     _tree->SetBranchAddress("BToKee_ele1_eta",&BToKee_ele1_eta);
     _tree->SetBranchAddress("BToKee_ele1_phi",&BToKee_ele1_phi);
@@ -293,6 +331,8 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("BToKee_ele2_phi",&BToKee_ele2_phi);
     _tree->SetBranchAddress("BToKee_ele2_charge",&BToKee_ele2_charge);
     _tree->SetBranchAddress("BToKee_ele2_index",&BToKee_ele2_index);
+    _tree->SetBranchAddress("BToKee_pt",&BToKee_pt);
+    _tree->SetBranchAddress("BToKee_eta",&BToKee_eta);
   }
 
   int isMC = _tree->SetBranchAddress("nGenPart",&nGenPart);

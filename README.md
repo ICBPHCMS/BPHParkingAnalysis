@@ -1,19 +1,22 @@
 # BPHParkingAnalysis
 Analysis package for analysis of BPH parked data
 
-### Instructions for 10_1_5
+### Instructions for 10_2_0
 ```
-cmsrel CMSSW_10_1_5
-cd CMSSW_10_1_5/src/
+cmsrel CMSSW_10_2_0
+cd CMSSW_10_2_0/src/
 cmsenv
 
 git clone https://github.com/ICBPHCMS/BPHParkingAnalysis.git
-cd BPHParkingAnalysis/NtupleProducer
-git checkout master
+scram b
 ```
 
 ### Producing ntuples
 ```
-sh Make.sh BToKpipiNtupleProducer.cc
-./BToKpipiNtupleProducer.exe mc --input test94X_NANO.root --output test.root
+BToKpipiNtupleProducer mc --input test94X_NANO.root --output test.root
+```
+
+### Evaluating BMX neutral network discriminant (only Kmumu so far)
+```
+BToKmumuNtupleProducer mc --input test94X_NANO.root --output test.root --addNNBMX BPHParkingAnalysis/NtupleProducer/data/weights_50.pb
 ```
