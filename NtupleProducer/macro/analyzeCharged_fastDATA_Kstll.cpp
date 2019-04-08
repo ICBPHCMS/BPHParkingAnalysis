@@ -54,6 +54,9 @@ const float MuonMass = 0.10565837;
 const float KaonMass = 0.493677;
 const float PionMass = 0.139570;
 
+const float lep1_pT_cut = 2.;
+const float lep2_pT_cut = 2.;
+
 int main(int argc, char **argv){
 
   if(argc < 2) {
@@ -625,41 +628,41 @@ int main(int argc, char **argv){
 
     t1->GetEntry(iEvt);
     
-    int BToKstll_llsel_index_pT=-1;
     int muon_tag_index_event = -1;
     int triplet_sel_index = -1;
-    bool tripletBDT4 = false;
+    int BToKstll_llsel_index_pT=-1;
     bool isllt = false;
     
-    if(BToKstll_lep1_pt[BToKstll_sel_index]>2.&& BToKstll_lep2_pt[BToKstll_sel_index]>2.){
+    if(BToKstll_lep1_pt[BToKstll_sel_index]>lep1_pT_cut && BToKstll_lep2_pt[BToKstll_sel_index]>lep2_pT_cut){
         triplet_sel_index = BToKstll_sel_index;
         muon_tag_index_event = Muon_sel_index;
     }
 
     std::vector<std::pair<int, int>> posRank;
-    
     for(unsigned int iPos = 0; iPos<BToKstll_order_index->size(); ++iPos)posRank.push_back(std::pair<int, int>(iPos, BToKstll_order_index->at(iPos)));
-      
     std::sort(posRank.begin(), posRank.end(),[](const std::pair<int, float>& i, const std::pair<int, float>& j) {return i.second < j.second; });     
 
-    for(auto rank:posRank){
-        
-        if(BToKstll_lep1_pt[rank.first]>2. && BToKstll_lep2_pt[rank.first]>2.){
-            
-            if(!isllt && BToKstll_lep2_isPFLep[rank.first]== 1){
-                BToKstll_llsel_index_pT = rank.first;
-                isllt = true;
+    if(!BToKstll_isLowPtEle){
+        for(auto rank:posRank){
+            if(BToKstll_lep1_pt[rank.first]>lep1_pT_cut && BToKstll_lep2_pt[rank.first]>lep2_pT_cut){
+                if(BToKstll_lep2_isPFLep[rank.first]== 1){
+                    BToKstll_llsel_index_pT = rank.first;
+                    isllt = true;
+                    break;
+                }
             }
-            
-            if(!tripletBDT4 && BToKstll_isLowPtEle && BToKstll_lep2_seedBDT_unbiased[rank.first] > 4){
-                triplet_sel_index = rank.first;
-                muon_tag_index_event = Muon_tag_index->at(rank.first);
-		isllt = true;
-                tripletBDT4=true;
+        }
+    }
+    else{
+        for(auto rank:posRank){
+            if(BToKstll_lep1_pt[rank.first]>lep1_pT_cut && BToKstll_lep2_pt[rank.first]>lep2_pT_cut){
+                if(BToKstll_lep2_seedBDT_unbiased[rank.first] > 4){
+                    triplet_sel_index = rank.first;
+                    muon_tag_index_event = Muon_tag_index->at(rank.first);
+                    isllt = true;
+                    break;
+                }
             }
-            
-            if(isllt)break;
-        
         }
     }
     
