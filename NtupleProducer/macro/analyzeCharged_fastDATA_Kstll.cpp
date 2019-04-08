@@ -658,7 +658,7 @@ int main(int argc, char **argv){
                 tripletBDT4=true;
             }
             
-            if(tripletBDT4)break;
+            if(isllt)break;
         
         }
     }
