@@ -54,6 +54,9 @@ const float MuonMass = 0.10565837;
 const float KaonMass = 0.493677;
 const float PionMass = 0.139570;
 
+const float lep1_pT_cut = 2.;
+const float lep2_pT_cut = 2.;
+
 int main(int argc, char **argv){
 
   if(argc < 2) {
@@ -331,8 +334,8 @@ int main(int argc, char **argv){
   
   //float nnBMX = -1;
     
-  int BToKstll_sel_index = -1;
-  int BToKstll_llsel_index = -1;
+  //int BToKstll_sel_index = -1;
+  //int BToKstll_llsel_index = -1;
   std::vector<int>* BToKstll_order_index = 0;
   
   std::vector<int>* Muon_tag_index = 0;
@@ -399,15 +402,16 @@ int main(int argc, char **argv){
   t1->SetBranchStatus("luminosityBlock", 1);            t1->SetBranchAddress("luminosityBlock", &lumi);
   t1->SetBranchStatus("event", 1);                      t1->SetBranchAddress("event", &event);
   
-  t1->SetBranchStatus("BToKstll_sel_index", 1);         t1->SetBranchAddress("BToKstll_sel_index", &BToKstll_sel_index);
-  t1->SetBranchStatus("BToKstll_llsel_index", 1);       t1->SetBranchAddress("BToKstll_llsel_index", &BToKstll_llsel_index);
+  //t1->SetBranchStatus("BToKstll_sel_index", 1);         t1->SetBranchAddress("BToKstll_sel_index", &BToKstll_sel_index);
+  //t1->SetBranchStatus("BToKstll_llsel_index", 1);       t1->SetBranchAddress("BToKstll_llsel_index", &BToKstll_llsel_index);
   t1->SetBranchStatus("BToKstll_order_index", 1);       t1->SetBranchAddress("BToKstll_order_index", &BToKstll_order_index);
 
   t1->SetBranchStatus("Muon_tag_index", 1);             t1->SetBranchAddress("Muon_tag_index", &Muon_tag_index);
   t1->SetBranchStatus("Muon_sel_index", 1);             t1->SetBranchAddress("Muon_sel_index", &Muon_sel_index);
   
   t1->SetBranchStatus("BToKstll_lep2_isPFLep", 1);      t1->SetBranchAddress("BToKstll_lep2_isPFLep", &BToKstll_lep2_isPFLep);  
-  t1->SetBranchStatus("BToKstll_isLowPtEle", 1);        t1->SetBranchAddress("BToKstll_isLowPtEle", &BToKstll_isLowPtEle);  
+  
+  t1->SetBranchStatus("BToKstll_isLowPtEle", 1);      t1->SetBranchAddress("BToKstll_isLowPtEle", &BToKstll_isLowPtEle);  
   
   t1->SetBranchStatus("BToKstll_lep1_seedBDT_unbiased", 1);   t1->SetBranchAddress("BToKstll_lep1_seedBDT_unbiased", &BToKstll_lep1_seedBDT_unbiased);
   t1->SetBranchStatus("BToKstll_lep1_seedBDT_ptbiased", 1);   t1->SetBranchAddress("BToKstll_lep1_seedBDT_ptbiased", &BToKstll_lep1_seedBDT_ptbiased);
@@ -463,6 +467,7 @@ int main(int argc, char **argv){
     t1->SetBranchStatus("Electron_phi", 1);             t1->SetBranchAddress("Electron_phi", &Lepton_phi);
     t1->SetBranchStatus("Electron_dxy", 1);             t1->SetBranchAddress("Electron_dxy", &Lepton_dxy);
     t1->SetBranchStatus("Electron_dz", 1);              t1->SetBranchAddress("Electron_dz", &Lepton_dz);
+
   }
   else{    
       
@@ -625,38 +630,41 @@ int main(int argc, char **argv){
     
     int muon_tag_index_event = -1;
     int triplet_sel_index = -1;
-    bool isllt = false;         
+    bool isllt = false;
 
-    //if there is at least one llt triplet with tag muon, we pick it (whatever its rank is if LTT ntuples are analyzed)
-    if(BToKstll_llsel_index != -1){
-        triplet_sel_index = BToKstll_llsel_index;
-        muon_tag_index_event = Muon_tag_index->at(BToKstll_llsel_index);
-	isllt = true;
-    } 
-    else{ 
-        triplet_sel_index = BToKstll_sel_index;
-        muon_tag_index_event = Muon_sel_index;
+    std::vector<std::pair<int, int>> posRank;
+    for(unsigned int iPos = 0; iPos<BToKstll_order_index->size(); ++iPos)posRank.push_back(std::pair<int, int>(iPos, BToKstll_order_index->at(iPos)));
+    std::sort(posRank.begin(), posRank.end(),[](const std::pair<int, float>& i, const std::pair<int, float>& j) {return i.second < j.second; });     
+
+
+    for(auto rank:posRank){
+        if(BToKstll_lep1_pt[rank.first]>lep1_pT_cut && BToKstll_lep2_pt[rank.first]>lep2_pT_cut){
+                
+            if(!BToKstll_isLowPtEle && triplet_sel_index==-1){
+                triplet_sel_index = rank.first;
+                muon_tag_index_event = Muon_tag_index->at(rank.first);
+            }
+        
+            //if there is at least one llt triplet with tag muon, we pick it (whatever its rank is in case of LTT sample)
+            if(!BToKstll_isLowPtEle && BToKstll_lep2_isPFLep[rank.first]== 1 && Muon_tag_index->at(rank.first) !=-1){
+                triplet_sel_index = rank.first;
+                muon_tag_index_event = Muon_tag_index->at(rank.first);                
+                isllt = true;
+                break;
+            }
+              
+            //For low pt gsfTracks, only consider triplets if subleading lepton had BDT_seed_unbiased > 4
+            if(BToKstll_isLowPtEle && BToKstll_lep2_seedBDT_unbiased[rank.first] > 4){
+                triplet_sel_index = rank.first;
+                muon_tag_index_event = Muon_tag_index->at(rank.first);
+                isllt = true;
+                break;
+            }                
+                
+        }
     }
-            
-    if(BToKstll_isLowPtEle){
-      std::vector<std::pair<int, int>> posRank;
-      for(unsigned int iPos = 0; iPos<BToKstll_order_index->size(); ++iPos)
-	posRank.push_back(std::pair<int, int>(iPos, BToKstll_order_index->at(iPos)));
-      
-      std::sort(posRank.begin(), posRank.end(), 
-		[](const std::pair<int, float>& i, const std::pair<int, float>& j) {
-		  return i.second < j.second; });     
-
-      for(auto rank:posRank){
-	if(BToKstll_lep2_seedBDT_unbiased[rank.first] > 4 && Muon_tag_index->at(rank.first) != -1){
-	  triplet_sel_index = rank.first;
-	  muon_tag_index_event = Muon_tag_index->at(rank.first);
-	  break;
-	}
-      }
-    }
-
-            
+    
+     
     if(muon_tag_index_event == -1) continue;
     if(dataset == "MC" && Muon_probe_index == -1) continue;
     ++nEv_muonTag[0];
@@ -664,8 +672,6 @@ int main(int argc, char **argv){
     if(triplet_sel_index == -1)continue;
     if(dataset == "MC" && triplet_sel_index != BToKstll_gen_index) continue;
     ++nEv_recoCand[0];
-
-
     
     //opposite sign leptons
     //expect eff 1 because opposite charge is already required at nanoAOD level
@@ -849,5 +855,4 @@ int main(int argc, char **argv){
   }
   outMassHistos.Close();
 
-}  
- 
+} 
