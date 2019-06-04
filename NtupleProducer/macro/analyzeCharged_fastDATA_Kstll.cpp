@@ -1,4 +1,4 @@
-//g++ -Wall -o analyzeCharged_fastDATA_Kstll `root-config --cflags --glibs` -lRooFitCore analyzeCharged_fastDATA_Kstll.cpp
+-//g++ -Wall -o analyzeCharged_fastDATA_Kstll `root-config --cflags --glibs` -lRooFitCore analyzeCharged_fastDATA_Kstll.cpp
 
 //./analyzeCharged_fastDATA_Kstll --isEle (0,1) --dataset (-1, runA, runB, runD, MC) --run (1,2,3,..., -1) --typeSelection (tightCB) --ntupleList (list.txt) --JOBid (1,2..) --outputFolder ("outfolder") --nMaxEvents (-1, N) --saveSelectedNTU (1,0) --outSelectedNTU (path for selected ntuples) --testFile ("path")
 
@@ -519,6 +519,12 @@ int main(int argc, char **argv){
   TH1F* hKaonpt[7];
   TH1F* hLep1pt[7];
   TH1F* hLep2pt[7];
+  TH1F* hLep1pt_PFCand[7];
+  TH1F* hLep2pt_PFCand[7];
+  TH1F* hLep1pt_LT[7];
+  TH1F* hLep2pt_LT[7];
+  TH1F* hLep1pt_Track[7];
+  TH1F* hLep2pt_Track[7];  
   TH1F* hLep1pt_EB[7];
   TH1F* hLep2pt_EB[7];
   TH1F* hLep1pt_EE[7];
@@ -636,17 +642,47 @@ int main(int argc, char **argv){
     hKaonpt[ij] = new TH1F(Form("hKaonpt_%d", ij), "", 100, 0., 10.);
     hKaonpt[ij]->Sumw2();
     hKaonpt[ij]->SetLineColor(kRed);
-    hKaonpt[ij]->SetLineWidth(2);
-
+    hKaonpt[ij]->SetLineWidth(2);    
+    
     hLep1pt[ij] = new TH1F(Form("hLep1pt_%d", ij), "", 100, 0., 10.);
     hLep1pt[ij]->Sumw2();
     hLep1pt[ij]->SetLineColor(kRed);
     hLep1pt[ij]->SetLineWidth(2);
+    
+    hLep1pt_PFCand[ij] = new TH1F(Form("hLep1pt_PFCand_%d", ij), "", 100, 0., 10.);
+    hLep1pt_PFCand[ij]->Sumw2();
+    hLep1pt_PFCand[ij]->SetLineColor(kRed);
+    hLep1pt_PFCand[ij]->SetLineWidth(2);
+
+    hLep1pt_LT[ij] = new TH1F(Form("hLep1pt_LT_%d", ij), "", 100, 0., 10.);
+    hLep1pt_LT[ij]->Sumw2();
+    hLep1pt_LT[ij]->SetLineColor(kRed);
+    hLep1pt_LT[ij]->SetLineWidth(2);
+
+    hLep1pt_Track[ij] = new TH1F(Form("hLep1pt_Track_%d", ij), "", 100, 0., 10.);
+    hLep1pt_Track[ij]->Sumw2();
+    hLep1pt_Track[ij]->SetLineColor(kRed);
+    hLep1pt_Track[ij]->SetLineWidth(2);    
 
     hLep2pt[ij] = new TH1F(Form("hLep2pt_%d", ij), "", 100, 0., 10.);
     hLep2pt[ij]->Sumw2();
     hLep2pt[ij]->SetLineColor(kRed);
     hLep2pt[ij]->SetLineWidth(2);
+    
+    hLep2pt_PFCand[ij] = new TH1F(Form("hLep2pt_PFCand_%d", ij), "", 100, 0., 10.);
+    hLep2pt_PFCand[ij]->Sumw2();
+    hLep2pt_PFCand[ij]->SetLineColor(kRed);
+    hLep2pt_PFCand[ij]->SetLineWidth(2);
+
+    hLep2pt_LT[ij] = new TH1F(Form("hLep2pt_LT_%d", ij), "", 100, 0., 10.);
+    hLep2pt_LT[ij]->Sumw2();
+    hLep2pt_LT[ij]->SetLineColor(kRed);
+    hLep2pt_LT[ij]->SetLineWidth(2);
+
+    hLep2pt_Track[ij] = new TH1F(Form("hLep2pt_Track_%d", ij), "", 100, 0., 10.);
+    hLep2pt_Track[ij]->Sumw2();
+    hLep2pt_Track[ij]->SetLineColor(kRed);
+    hLep2pt_Track[ij]->SetLineWidth(2);    
 
     //
     hLep1pt_EB[ij] = new TH1F(Form("hLep1pt_EB_%d", ij), "", 100, 0., 10.);
@@ -715,8 +751,10 @@ int main(int argc, char **argv){
     bool isl1l2_lowPt = false;
     bool isl2_lowPt = false;
     bool isl1l2_PFCand = false;
+    bool isl1_PFCand = false;
     bool isl2_PFCand = false;
     bool isl1l2_LT = false;
+    bool isl1_LT = false;
     bool isl2_LT = false;
     bool goodTripletFound = false;
 
@@ -754,9 +792,11 @@ int main(int argc, char **argv){
 	isl2_lowPt = bool(BToKstll_lep2_isLowPt[triplet_sel_index]== 1);
 
     isl1l2_PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index] == 1 && BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
+    isl1_PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index]== 1);
     isl2_PFCand = bool(BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
     
     isl1l2_LT = bool(BToKstll_lep1_isLT[triplet_sel_index] == 1 && BToKstll_lep2_isLT[triplet_sel_index]== 1);
+    isl1_LT = bool(BToKstll_lep1_isLT[triplet_sel_index]== 1);
     isl2_LT = bool(BToKstll_lep2_isLT[triplet_sel_index]== 1);
     
 	goodTripletFound = true;
@@ -890,11 +930,23 @@ int main(int argc, char **argv){
       if(isl1l2_lowPt) hBmass_l1l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl2_lowPt) hBmass_l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl1l2_PFCand) hBmass_l1l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      if(isl2_PFCand) hBmass_l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl1_PFCand) hLep1pt_PFCand[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+      if(isl2_PFCand){ 
+        hBmass_l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_PFCand[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+      }
       if(isl1l2_LT) hBmass_l1l2_LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      if(isl2_LT) hBmass_l2_LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl1_LT) hLep1pt_LT[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+      if(isl2_LT){
+        hBmass_l2_LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_LT[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+      }
       if(isl1l2_PFCand || isl1l2_LT) hBmass_l1l2_Track[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      if(isl2_PFCand || isl2_LT) hBmass_l2_Track[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl1_PFCand || isl1_LT) hLep1pt_Track[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+      if(isl2_PFCand || isl2_LT){
+        hBmass_l2_Track[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_Track[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+      }
 
       BDTele1_vs_pTele1[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index], BToKstll_lep1_seedBDT_unbiased[triplet_sel_index]);
       BDTele2_vs_pTele2[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index], BToKstll_lep2_seedBDT_unbiased[triplet_sel_index]);
@@ -911,12 +963,23 @@ int main(int argc, char **argv){
     if(isl1l2_lowPt) hBmass_l1l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl2_lowPt) hBmass_l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl1l2_PFCand) hBmass_l1l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    if(isl2_PFCand) hBmass_l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(isl1_PFCand) hLep1pt_PFCand[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+    if(isl2_PFCand){
+        hBmass_l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_PFCand[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+    }
     if(isl1l2_LT) hBmass_l1l2_LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    if(isl2_LT) hBmass_l2_LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(isl1_LT) hLep1pt_LT[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+    if(isl2_LT){
+        hBmass_l2_LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_LT[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+    }
     if(isl1l2_PFCand || isl1l2_LT) hBmass_l1l2_Track[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    if(isl2_PFCand || isl2_LT) hBmass_l2_Track[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    
+    if(isl1_PFCand || isl1_LT) hLep1pt_Track[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+    if(isl2_PFCand || isl2_LT){
+        hBmass_l2_Track[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_Track[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+    }
     hAlpha[6]->Fill(BToKstll_B_cosAlpha[triplet_sel_index]);
     hCLVtx[6]->Fill(BToKstll_B_CL_vtx[triplet_sel_index]);
     hDCASig[6]->Fill(BToKstll_kaon_DCASig[triplet_sel_index]);
@@ -961,7 +1024,13 @@ int main(int argc, char **argv){
     hctxy[ij]->Write(hctxy[ij]->GetName());
     hKaonpt[ij]->Write(hKaonpt[ij]->GetName());
     hLep1pt[ij]->Write(hLep1pt[ij]->GetName());
+    hLep1pt_PFCand[ij]->Write(hLep1pt_PFCand[ij]->GetName());
+    hLep1pt_LT[ij]->Write(hLep1pt_LT[ij]->GetName());
+    hLep1pt_Track[ij]->Write(hLep1pt_Track[ij]->GetName());
     hLep2pt[ij]->Write(hLep2pt[ij]->GetName());
+    hLep2pt_PFCand[ij]->Write(hLep2pt_PFCand[ij]->GetName());
+    hLep2pt_LT[ij]->Write(hLep2pt_LT[ij]->GetName());
+    hLep2pt_Track[ij]->Write(hLep2pt_Track[ij]->GetName());
     hLep1pt_EB[ij]->Write(hLep1pt_EB[ij]->GetName());
     hLep1pt_EE[ij]->Write(hLep1pt_EE[ij]->GetName());
     hLep2pt_EB[ij]->Write(hLep2pt_EB[ij]->GetName());
