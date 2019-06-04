@@ -343,6 +343,10 @@ int main(int argc, char **argv){
   int BToKstll_lep2_isLowPt[kBToKstllMax];
   int BToKstll_lep2_isPFLep[kBToKstllMax];
   int BToKstll_isLowPtEle[kBToKstllMax];
+  int BToKstll_lep1_isPFCand[kBToKstllMax];
+  int BToKstll_lep2_isPFCand[kBToKstllMax];
+  int BToKstll_lep1_isLT[kBToKstllMax];
+  int BToKstll_lep2_isLT[kBToKstllMax];
   
   float BToKstll_lep1_seedBDT_unbiased[kBToKstllMax];
   float BToKstll_lep1_seedBDT_ptbiased[kBToKstllMax];
@@ -411,7 +415,13 @@ int main(int argc, char **argv){
   t1->SetBranchStatus("BToKstll_lep1_isLowPt", 1);      t1->SetBranchAddress("BToKstll_lep1_isLowPt", &BToKstll_lep1_isLowPt);
   t1->SetBranchStatus("BToKstll_lep2_isLowPt", 1);      t1->SetBranchAddress("BToKstll_lep2_isLowPt", &BToKstll_lep2_isLowPt);
   t1->SetBranchStatus("BToKstll_lep2_isPFLep", 1);      t1->SetBranchAddress("BToKstll_lep2_isPFLep", &BToKstll_lep2_isPFLep);
-  t1->SetBranchStatus("BToKstll_isLowPtEle", 1);        t1->SetBranchAddress("BToKstll_isLowPtEle", &BToKstll_isLowPtEle);  
+  t1->SetBranchStatus("BToKstll_isLowPtEle", 1);        t1->SetBranchAddress("BToKstll_isLowPtEle", &BToKstll_isLowPtEle);
+  
+  t1->SetBranchStatus("BToKstll_lep1_isPFCand", 1);      t1->SetBranchAddress("BToKstll_lep1_isPFCand", &BToKstll_lep1_isPFCand);
+  t1->SetBranchStatus("BToKstll_lep2_isPFCand", 1);      t1->SetBranchAddress("BToKstll_lep2_isPFCand", &BToKstll_lep2_isPFCand);
+
+  t1->SetBranchStatus("BToKstll_lep1_isLT", 1);      t1->SetBranchAddress("BToKstll_lep1_isLT", &BToKstll_lep1_isLT);
+  t1->SetBranchStatus("BToKstll_lep2_isLT", 1);      t1->SetBranchAddress("BToKstll_lep2_isLT", &BToKstll_lep2_isLT);
   
   t1->SetBranchStatus("BToKstll_lep1_seedBDT_unbiased", 1);   t1->SetBranchAddress("BToKstll_lep1_seedBDT_unbiased", &BToKstll_lep1_seedBDT_unbiased);
   t1->SetBranchStatus("BToKstll_lep1_seedBDT_ptbiased", 1);   t1->SetBranchAddress("BToKstll_lep1_seedBDT_ptbiased", &BToKstll_lep1_seedBDT_ptbiased);
@@ -521,6 +531,10 @@ int main(int argc, char **argv){
   TH1F* hBmass_ltt[7];
   TH1F* hBmass_l1l2_lowPt[7];
   TH1F* hBmass_l2_lowPt[7];
+  TH1F* hBmass_l1l2_PFCand[7];
+  TH1F* hBmass_l2_PFCand[7];
+  TH1F* hBmass_l1l2_LT[7];
+  TH1F* hBmass_l2_LT[7];
   TH2F* BDTele1_vs_pTele1[7];
   TH2F* BDTele2_vs_pTele2[7];
   TH2F* BDTele2_vs_BDTele1[7];
@@ -581,6 +595,26 @@ int main(int argc, char **argv){
     hBmass_l2_lowPt[ij]->Sumw2();
     hBmass_l2_lowPt[ij]->SetLineColor(kRed);
     hBmass_l2_lowPt[ij]->SetLineWidth(2);
+    
+    hBmass_l1l2_PFCand[ij] = new TH1F(Form("Bmass_l1l2_PFCand_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1l2_PFCand[ij]->Sumw2();
+    hBmass_l1l2_PFCand[ij]->SetLineColor(kRed);
+    hBmass_l1l2_PFCand[ij]->SetLineWidth(2);
+    
+    hBmass_l2_PFCand[ij] = new TH1F(Form("Bmass_l2_PFCand_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l2_PFCand[ij]->Sumw2();
+    hBmass_l2_PFCand[ij]->SetLineColor(kRed);
+    hBmass_l2_PFCand[ij]->SetLineWidth(2);
+    
+    hBmass_l1l2_LT[ij] = new TH1F(Form("Bmass_l1l2_LT_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1l2_LT[ij]->Sumw2();
+    hBmass_l1l2_LT[ij]->SetLineColor(kRed);
+    hBmass_l1l2_LT[ij]->SetLineWidth(2);
+    
+    hBmass_l2_LT[ij] = new TH1F(Form("Bmass_l2_LT_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l2_LT[ij]->Sumw2();
+    hBmass_l2_LT[ij]->SetLineColor(kRed);
+    hBmass_l2_LT[ij]->SetLineWidth(2);    
 
     hctxy[ij] = new TH1F(Form("hctxy_%d", ij), "", 1000, 0., 10.);
     hctxy[ij]->Sumw2();
@@ -668,6 +702,10 @@ int main(int argc, char **argv){
     bool isllt = false;         
     bool isl1l2_lowPt = false;
     bool isl2_lowPt = false;
+    bool isl1l2_PFCand = false;
+    bool isl2_PFCand = false;
+    bool isl1l2_LT = false;
+    bool isl2_LT = false;
     bool goodTripletFound = false;
 
     //choose the best vtxCL candidate provided it survives the selections
@@ -703,6 +741,12 @@ int main(int argc, char **argv){
 	isl1l2_lowPt = bool(BToKstll_lep1_isLowPt[triplet_sel_index] == 1 && BToKstll_lep2_isLowPt[triplet_sel_index]== 1);
 	isl2_lowPt = bool(BToKstll_lep2_isLowPt[triplet_sel_index]== 1);
 
+    isl1l2_PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index] == 1 && BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
+    isl2_PFCand = bool(BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
+    
+    isl1l2_LT = bool(BToKstll_lep1_isLT[triplet_sel_index] == 1 && BToKstll_lep2_isLT[triplet_sel_index]== 1);
+    isl2_LT = bool(BToKstll_lep2_isLT[triplet_sel_index]== 1);
+    
 	goodTripletFound = true;
 	break;
       }
@@ -833,6 +877,10 @@ int main(int argc, char **argv){
       else hBmass_ltt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl1l2_lowPt) hBmass_l1l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl2_lowPt) hBmass_l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl1l2_PFCand) hBmass_l1l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl2_PFCand) hBmass_l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl1l2_LT) hBmass_l1l2_LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl2_LT) hBmass_l2_LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
 
       BDTele1_vs_pTele1[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index], BToKstll_lep1_seedBDT_unbiased[triplet_sel_index]);
       BDTele2_vs_pTele2[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index], BToKstll_lep2_seedBDT_unbiased[triplet_sel_index]);
@@ -848,6 +896,10 @@ int main(int argc, char **argv){
     else hBmass_ltt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl1l2_lowPt) hBmass_l1l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl2_lowPt) hBmass_l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(isl1l2_PFCand) hBmass_l1l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(isl2_PFCand) hBmass_l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(isl1l2_LT) hBmass_l1l2_LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(isl2_LT) hBmass_l2_LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     
     hAlpha[6]->Fill(BToKstll_B_cosAlpha[triplet_sel_index]);
     hCLVtx[6]->Fill(BToKstll_B_CL_vtx[triplet_sel_index]);
@@ -909,6 +961,10 @@ int main(int argc, char **argv){
     hBmass_ltt[ij]->Write(hBmass_ltt[ij]->GetName());
     hBmass_l1l2_lowPt[ij]->Write(hBmass_l1l2_lowPt[ij]->GetName());
     hBmass_l2_lowPt[ij]->Write(hBmass_l2_lowPt[ij]->GetName());
+    hBmass_l1l2_PFCand[ij]->Write(hBmass_l1l2_PFCand[ij]->GetName());
+    hBmass_l2_PFCand[ij]->Write(hBmass_l2_PFCand[ij]->GetName());
+    hBmass_l1l2_LT[ij]->Write(hBmass_l1l2_LT[ij]->GetName());
+    hBmass_l2_LT[ij]->Write(hBmass_l2_LT[ij]->GetName());
 
     BDTele1_vs_pTele1[ij]->Write(BDTele1_vs_pTele1[ij]->GetName());
     BDTele2_vs_pTele2[ij]->Write(BDTele2_vs_pTele2[ij]->GetName());
@@ -923,4 +979,4 @@ int main(int argc, char **argv){
   }
   outMassHistos.Close();
 
-}  
+} 
