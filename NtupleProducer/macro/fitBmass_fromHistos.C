@@ -71,11 +71,11 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
 
   TH1F* h_Bmass[7];
   TH1F* h_Bmass_llt[7];
-  TH1F* h_Bmass_ltt[7];
+  TH1F* h_Bmass_not_llt[7];
   for(int ij=0; ij<7; ++ij){
     h_Bmass[ij] = (TH1F*)inF->Get(Form("Bmass_%d", ij))->Clone(Form("h_Bmass_%d", ij));
     h_Bmass_llt[ij] = (TH1F*)inF->Get(Form("Bmass_llt_%d", ij))->Clone(Form("h_Bmass_llt_%d", ij));
-    h_Bmass_ltt[ij] = (TH1F*)inF->Get(Form("Bmass_ltt_%d", ij))->Clone(Form("h_Bmass_ltt_%d", ij));
+    h_Bmass_not_llt[ij] = (TH1F*)inF->Get(Form("Bmass_not_llt_%d", ij))->Clone(Form("h_Bmass_not_llt_%d", ij));
     //    h_Bmass[ij]->GetXaxis()->SetRangeUser(4.5, 6.);
   }//loop
 
@@ -118,7 +118,7 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
     
     RooDataHist hBMass("hBMass", "hBMass", *w.var("x"), Import(*(h_Bmass[ij])));
     RooDataHist hBMass_llt("hBMass_llt", "hBMass_llt", *w.var("x"), Import(*(h_Bmass_llt[ij])));
-    RooDataHist hBMass_ltt("hBMass_ltt", "hBMass_ltt", *w.var("x"), Import(*(h_Bmass_ltt[ij])));
+    RooDataHist hBMass_not_llt("hBMass_not_llt", "hBMass_not_llt", *w.var("x"), Import(*(h_Bmass_not_llt[ij])));
     w.Print();
 
     RooFitResult * r = model->fitTo(hBMass, Minimizer("Minuit2"),Save(true));
@@ -140,7 +140,7 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
     model->plotOn(plot, Components("modelb"),LineStyle(kDashed));
     model->plotOn(plot, Components("smodel"),LineColor(kRed));
     hBMass_llt.plotOn(plot,LineColor(kGreen+2),MarkerColor(kGreen+2)) ;
-    hBMass_ltt.plotOn(plot,LineColor(kViolet),MarkerColor(kViolet)) ;
+    hBMass_not_llt.plotOn(plot,LineColor(kViolet),MarkerColor(kViolet)) ;
     chi2[ij] = plot->chiSquare();
 
     RooRealVar* parS = (RooRealVar*) r->floatParsFinal().find("nsignal");
@@ -214,5 +214,4 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
 	      << " chi2 = " << chi2[ij] << std::endl;
   }
 
-}
-
+} 
