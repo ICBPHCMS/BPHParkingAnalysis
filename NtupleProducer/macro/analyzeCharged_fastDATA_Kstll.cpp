@@ -1,4 +1,4 @@
--//g++ -Wall -o analyzeCharged_fastDATA_Kstll `root-config --cflags --glibs` -lRooFitCore analyzeCharged_fastDATA_Kstll.cpp
+//g++ -Wall -o analyzeCharged_fastDATA_Kstll `root-config --cflags --glibs` -lRooFitCore analyzeCharged_fastDATA_Kstll.cpp
 
 //./analyzeCharged_fastDATA_Kstll --isEle (0,1) --dataset (-1, runA, runB, runD, MC) --run (1,2,3,..., -1) --typeSelection (tightCB) --ntupleList (list.txt) --JOBid (1,2..) --outputFolder ("outfolder") --nMaxEvents (-1, N) --saveSelectedNTU (1,0) --outSelectedNTU (path for selected ntuples) --testFile ("path")
 
@@ -341,6 +341,7 @@ int main(int argc, char **argv){
 
   int BToKstll_lep1_isLowPt[kBToKstllMax];
   int BToKstll_lep2_isLowPt[kBToKstllMax];
+  int BToKstll_lep1_isPFLep[kBToKstllMax];
   int BToKstll_lep2_isPFLep[kBToKstllMax];
   int BToKstll_isLowPtEle[kBToKstllMax];
   int BToKstll_lep1_isPFCand[kBToKstllMax];
@@ -414,6 +415,7 @@ int main(int argc, char **argv){
   
   t1->SetBranchStatus("BToKstll_lep1_isLowPt", 1);      t1->SetBranchAddress("BToKstll_lep1_isLowPt", &BToKstll_lep1_isLowPt);
   t1->SetBranchStatus("BToKstll_lep2_isLowPt", 1);      t1->SetBranchAddress("BToKstll_lep2_isLowPt", &BToKstll_lep2_isLowPt);
+  t1->SetBranchStatus("BToKstll_lep1_isPFLep", 1);      t1->SetBranchAddress("BToKstll_lep1_isPFLep", &BToKstll_lep1_isPFLep);
   t1->SetBranchStatus("BToKstll_lep2_isPFLep", 1);      t1->SetBranchAddress("BToKstll_lep2_isPFLep", &BToKstll_lep2_isPFLep);
   t1->SetBranchStatus("BToKstll_isLowPtEle", 1);        t1->SetBranchAddress("BToKstll_isLowPtEle", &BToKstll_isLowPtEle);
   
@@ -534,7 +536,7 @@ int main(int argc, char **argv){
   TH2F* hllRefitMass_vs_Bmass[7];
   TH1F* hBmass[7];
   TH1F* hBmass_llt[7];
-  TH1F* hBmass_ltt[7];
+  TH1F* hBmass_not_llt[7];
   TH1F* hBmass_l1l2_lowPt[7];
   TH1F* hBmass_l2_lowPt[7];
   TH1F* hBmass_l1l2_PFCand[7];
@@ -589,10 +591,10 @@ int main(int argc, char **argv){
     hBmass_llt[ij]->SetLineColor(kRed);
     hBmass_llt[ij]->SetLineWidth(2);
 
-    hBmass_ltt[ij] = new TH1F(Form("Bmass_ltt_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
-    hBmass_ltt[ij]->Sumw2();
-    hBmass_ltt[ij]->SetLineColor(kRed);
-    hBmass_ltt[ij]->SetLineWidth(2);
+    hBmass_not_llt[ij] = new TH1F(Form("Bmass_not_llt_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_not_llt[ij]->Sumw2();
+    hBmass_not_llt[ij]->SetLineColor(kRed);
+    hBmass_not_llt[ij]->SetLineWidth(2);
 
     hBmass_l1l2_lowPt[ij] = new TH1F(Form("Bmass_l1l2_lowPt_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
     hBmass_l1l2_lowPt[ij]->Sumw2();
@@ -768,8 +770,8 @@ int main(int argc, char **argv){
 	triplet_sel_index = BToKstll_order_index->at(iP);
 	muon_tag_index_event = Muon_tag_index->at(triplet_sel_index);
 	
-	if(iL == 0 && BToKstll_lep2_isPFLep[triplet_sel_index] != 1) continue;
-	else if(iL == 1 && BToKstll_lep2_isPFLep[triplet_sel_index] == 1) continue;
+	if( iL == 0 && (BToKstll_lep1_isPFLep[triplet_sel_index] != 1 || BToKstll_lep2_isPFLep[triplet_sel_index] != 1) ) continue;
+	else if( iL == 1 && (BToKstll_lep1_isPFLep[triplet_sel_index] == 1 || BToKstll_lep2_isPFLep[triplet_sel_index] == 1) ) continue;
 	
 	if(muon_tag_index_event == -1 || triplet_sel_index == -1) continue;
 	if(dataset == "MC" && Muon_probe_index == -1) continue;
@@ -926,7 +928,7 @@ int main(int argc, char **argv){
       hllRefitMass_vs_Bmass[massBin]->Fill(BToKstll_B_mass[triplet_sel_index], llInvRefitMass);
       hBmass[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isllt) hBmass_llt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      else hBmass_ltt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      else hBmass_not_llt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl1l2_lowPt) hBmass_l1l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl2_lowPt) hBmass_l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl1l2_PFCand) hBmass_l1l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
@@ -959,7 +961,7 @@ int main(int argc, char **argv){
     hllRefitMass_vs_Bmass[6]->Fill(BToKstll_B_mass[triplet_sel_index], llInvRefitMass);
     hBmass[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isllt) hBmass_llt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    else hBmass_ltt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    else hBmass_not_llt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl1l2_lowPt) hBmass_l1l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl2_lowPt) hBmass_l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl1l2_PFCand) hBmass_l1l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
@@ -1043,7 +1045,7 @@ int main(int argc, char **argv){
     hllRefitMass_vs_Bmass[ij]->Write(hllRefitMass_vs_Bmass[ij]->GetName());
     hBmass[ij]->Write(hBmass[ij]->GetName());
     hBmass_llt[ij]->Write(hBmass_llt[ij]->GetName());
-    hBmass_ltt[ij]->Write(hBmass_ltt[ij]->GetName());
+    hBmass_not_llt[ij]->Write(hBmass_not_llt[ij]->GetName());
     hBmass_l1l2_lowPt[ij]->Write(hBmass_l1l2_lowPt[ij]->GetName());
     hBmass_l2_lowPt[ij]->Write(hBmass_l2_lowPt[ij]->GetName());
     hBmass_l1l2_PFCand[ij]->Write(hBmass_l1l2_PFCand[ij]->GetName());
@@ -1066,4 +1068,4 @@ int main(int argc, char **argv){
   }
   outMassHistos.Close();
 
-} 
+}  
