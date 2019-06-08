@@ -521,6 +521,8 @@ int main(int argc, char **argv){
   TH1F* hKaonpt[7];
   TH1F* hLep1pt[7];
   TH1F* hLep2pt[7];
+  TH1F* hLep1pt_lowPt[7];
+  TH1F* hLep2pt_lowPt[7];
   TH1F* hLep1pt_PFCand[7];
   TH1F* hLep2pt_PFCand[7];
   TH1F* hLep1pt_LT[7];
@@ -650,6 +652,11 @@ int main(int argc, char **argv){
     hLep1pt[ij]->Sumw2();
     hLep1pt[ij]->SetLineColor(kRed);
     hLep1pt[ij]->SetLineWidth(2);
+
+    hLep1pt_lowPt[ij] = new TH1F(Form("hLep1pt_lowPt_%d", ij), "", 100, 0., 10.);
+    hLep1pt_lowPt[ij]->Sumw2();
+    hLep1pt_lowPt[ij]->SetLineColor(kRed);
+    hLep1pt_lowPt[ij]->SetLineWidth(2);
     
     hLep1pt_PFCand[ij] = new TH1F(Form("hLep1pt_PFCand_%d", ij), "", 100, 0., 10.);
     hLep1pt_PFCand[ij]->Sumw2();
@@ -670,6 +677,11 @@ int main(int argc, char **argv){
     hLep2pt[ij]->Sumw2();
     hLep2pt[ij]->SetLineColor(kRed);
     hLep2pt[ij]->SetLineWidth(2);
+    
+    hLep2pt_lowPt[ij] = new TH1F(Form("hLep2pt_lowPt_%d", ij), "", 100, 0., 10.);
+    hLep2pt_lowPt[ij]->Sumw2();
+    hLep2pt_lowPt[ij]->SetLineColor(kRed);
+    hLep2pt_lowPt[ij]->SetLineWidth(2);    
     
     hLep2pt_PFCand[ij] = new TH1F(Form("hLep2pt_PFCand_%d", ij), "", 100, 0., 10.);
     hLep2pt_PFCand[ij]->Sumw2();
@@ -751,6 +763,7 @@ int main(int argc, char **argv){
     int triplet_sel_index = -1;
     bool isllt = false;         
     bool isl1l2_lowPt = false;
+    bool isl1_lowPt = false;
     bool isl2_lowPt = false;
     bool isl1l2_PFCand = false;
     bool isl1_PFCand = false;
@@ -791,7 +804,8 @@ int main(int argc, char **argv){
 	isllt = (iL == 1) ? false : true;
 
 	isl1l2_lowPt = bool(BToKstll_lep1_isLowPt[triplet_sel_index] == 1 && BToKstll_lep2_isLowPt[triplet_sel_index]== 1);
-	isl2_lowPt = bool(BToKstll_lep2_isLowPt[triplet_sel_index]== 1);
+    isl1_lowPt = bool(BToKstll_lep1_isLowPt[triplet_sel_index]== 1);
+    isl2_lowPt = bool(BToKstll_lep2_isLowPt[triplet_sel_index]== 1);
 
     isl1l2_PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index] == 1 && BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
     isl1_PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index]== 1);
@@ -930,7 +944,11 @@ int main(int argc, char **argv){
       if(isllt) hBmass_llt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       else hBmass_not_llt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl1l2_lowPt) hBmass_l1l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      if(isl2_lowPt) hBmass_l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(isl1_lowPt) hLep1pt_lowPt[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+      if(isl2_lowPt){
+        hBmass_l2_lowPt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_lowPt[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+      }
       if(isl1l2_PFCand) hBmass_l1l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isl1_PFCand) hLep1pt_PFCand[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
       if(isl2_PFCand){ 
@@ -963,7 +981,11 @@ int main(int argc, char **argv){
     if(isllt) hBmass_llt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     else hBmass_not_llt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl1l2_lowPt) hBmass_l1l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    if(isl2_lowPt) hBmass_l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(isl1_lowPt) hLep1pt_lowPt[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+    if(isl2_lowPt){
+        hBmass_l2_lowPt[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+        hLep2pt_lowPt[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+    }
     if(isl1l2_PFCand) hBmass_l1l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(isl1_PFCand) hLep1pt_PFCand[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
     if(isl2_PFCand){
@@ -1026,10 +1048,12 @@ int main(int argc, char **argv){
     hctxy[ij]->Write(hctxy[ij]->GetName());
     hKaonpt[ij]->Write(hKaonpt[ij]->GetName());
     hLep1pt[ij]->Write(hLep1pt[ij]->GetName());
+    hLep1pt_lowPt[ij]->Write(hLep1pt_lowPt[ij]->GetName());
     hLep1pt_PFCand[ij]->Write(hLep1pt_PFCand[ij]->GetName());
     hLep1pt_LT[ij]->Write(hLep1pt_LT[ij]->GetName());
     hLep1pt_Track[ij]->Write(hLep1pt_Track[ij]->GetName());
     hLep2pt[ij]->Write(hLep2pt[ij]->GetName());
+    hLep2pt_lowPt[ij]->Write(hLep2pt_lowPt[ij]->GetName());
     hLep2pt_PFCand[ij]->Write(hLep2pt_PFCand[ij]->GetName());
     hLep2pt_LT[ij]->Write(hLep2pt_LT[ij]->GetName());
     hLep2pt_Track[ij]->Write(hLep2pt_Track[ij]->GetName());
