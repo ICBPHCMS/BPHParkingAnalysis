@@ -784,7 +784,7 @@ int main(int argc, char **argv){
 	muon_tag_index_event = Muon_tag_index->at(triplet_sel_index);
 	
 	if( iL == 0 && (BToKstll_lep1_isPFLep[triplet_sel_index] != 1 || BToKstll_lep2_isPFLep[triplet_sel_index] != 1) ) continue;
-	else if( iL == 1 && (BToKstll_lep1_isPFLep[triplet_sel_index] == 1 || BToKstll_lep2_isPFLep[triplet_sel_index] == 1) ) continue;
+	else if( iL == 1 && (BToKstll_lep1_isPFLep[triplet_sel_index] == 1 && BToKstll_lep2_isPFLep[triplet_sel_index] == 1) ) continue;
 	
 	if(muon_tag_index_event == -1 || triplet_sel_index == -1) continue;
 	if(dataset == "MC" && Muon_probe_index == -1) continue;
