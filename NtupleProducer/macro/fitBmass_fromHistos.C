@@ -71,11 +71,19 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
 
   TH1F* h_Bmass[7];
   TH1F* h_Bmass_llt[7];
-  TH1F* h_Bmass_not_llt[7];
+  TH1F* h_Bmass_lep2_isNotPFLep[7];
+  TH1F* h_Bmass_lep12_areNotPFLep[7];
+  
   for(int ij=0; ij<7; ++ij){
-    h_Bmass[ij] = (TH1F*)inF->Get(Form("Bmass_%d", ij))->Clone(Form("h_Bmass_%d", ij));
+    
+    h_Bmass[ij] = (TH1F*)inF->Get(Form("Bmass_%d", ij))->Clone(Form("h_Bmass_%d", ij));    
     h_Bmass_llt[ij] = (TH1F*)inF->Get(Form("Bmass_llt_%d", ij))->Clone(Form("h_Bmass_llt_%d", ij));
-    h_Bmass_not_llt[ij] = (TH1F*)inF->Get(Form("Bmass_not_llt_%d", ij))->Clone(Form("h_Bmass_not_llt_%d", ij));
+    
+    if(isEleFinalState) h_Bmass_lep2_isNotPFLep[ij] = (TH1F*)inF->Get(Form("Bmass_l2_lowPt_%d", ij))->Clone(Form("h_Bmass_lep2_isNotPFLep_%d", ij));
+    else h_Bmass_lep2_isNotPFLep[ij] = (TH1F*)inF->Get(Form("Bmass_l2_Track_%d", ij))->Clone(Form("h_Bmass_lep2_isNotPFLep_%d", ij));
+    
+    if(isEleFinalState) h_Bmass_lep12_areNotPFLep[ij] = (TH1F*)inF->Get(Form("Bmass_l1l2_lowPt_%d", ij))->Clone(Form("h_Bmass_lep12_areNotPFLep_%d", ij));
+    else h_Bmass_lep12_areNotPFLep[ij] = (TH1F*)inF->Get(Form("Bmass_l1l2_Track_%d", ij))->Clone(Form("h_Bmass_lep12_areNotPFLep_%d", ij));
     //    h_Bmass[ij]->GetXaxis()->SetRangeUser(4.5, 6.);
   }//loop
 
@@ -118,7 +126,8 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
     
     RooDataHist hBMass("hBMass", "hBMass", *w.var("x"), Import(*(h_Bmass[ij])));
     RooDataHist hBMass_llt("hBMass_llt", "hBMass_llt", *w.var("x"), Import(*(h_Bmass_llt[ij])));
-    RooDataHist hBMass_not_llt("hBMass_not_llt", "hBMass_not_llt", *w.var("x"), Import(*(h_Bmass_not_llt[ij])));
+    RooDataHist hBMass_lep2_isNotPFLep("hBMass_lep2_isNotPFLep", "hBMass_lep2_isNotPFLep", *w.var("x"), Import(*(h_Bmass_lep2_isNotPFLep[ij])));
+    RooDataHist hBMass_lep12_areNotPFLep("hBMass_lep12_areNotPFLep", "hBMass_lep12_areNotPFLep", *w.var("x"), Import(*(h_Bmass_lep12_areNotPFLep[ij])));
     w.Print();
 
     RooFitResult * r = model->fitTo(hBMass, Minimizer("Minuit2"),Save(true));
@@ -138,9 +147,10 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
     hBMass.plotOn(plot);
     model->plotOn(plot);
     model->plotOn(plot, Components("modelb"),LineStyle(kDashed));
-    model->plotOn(plot, Components("smodel"),LineColor(kRed));
-    hBMass_llt.plotOn(plot,LineColor(kGreen+2),MarkerColor(kGreen+2)) ;
-    hBMass_not_llt.plotOn(plot,LineColor(kViolet),MarkerColor(kViolet)) ;
+    model->plotOn(plot, Components("smodel"),LineColor(kOrange));
+    hBMass_llt.plotOn(plot,LineColor(kGreen+1),MarkerColor(kGreen+1)) ;
+    hBMass_lep2_isNotPFLep.plotOn(plot,LineColor(kCyan+1),MarkerColor(kCyan+1)) ;
+    hBMass_lep12_areNotPFLep.plotOn(plot,LineColor(kRed),MarkerColor(kRed)) ;
     chi2[ij] = plot->chiSquare();
 
     RooRealVar* parS = (RooRealVar*) r->floatParsFinal().find("nsignal");
@@ -214,4 +224,4 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
 	      << " chi2 = " << chi2[ij] << std::endl;
   }
 
-} 
+}  
