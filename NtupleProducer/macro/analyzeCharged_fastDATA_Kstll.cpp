@@ -775,7 +775,7 @@ int main(int argc, char **argv){
 
     //choose the best vtxCL candidate provided it survives the selections
     //priority is given to the llt triplets in case of LTT
-    for(int iL=0; iL<2; ++iL){
+    for(int iL=0; iL<3; ++iL){
       if(goodTripletFound) break;
 
       for(unsigned int iP = 0; iP < BToKstll_order_index->size(); ++iP){	
@@ -784,7 +784,9 @@ int main(int argc, char **argv){
 	muon_tag_index_event = Muon_tag_index->at(triplet_sel_index);
 	
 	if( iL == 0 && (BToKstll_lep1_isPFLep[triplet_sel_index] != 1 || BToKstll_lep2_isPFLep[triplet_sel_index] != 1) ) continue;
-	else if( iL == 1 && (BToKstll_lep1_isPFLep[triplet_sel_index] == 1 && BToKstll_lep2_isPFLep[triplet_sel_index] == 1) ) continue;
+	else if( iL == 1 && ( (BToKstll_lep1_isPFLep[triplet_sel_index] == 1 && BToKstll_lep2_isPFLep[triplet_sel_index] == 1) 
+                         || (BToKstll_lep1_isPFLep[triplet_sel_index] != 1 && BToKstll_lep2_isPFLep[triplet_sel_index] != 1) ) ) continue;
+    else if( iL == 2 && (BToKstll_lep1_isPFLep[triplet_sel_index] == 1 || BToKstll_lep2_isPFLep[triplet_sel_index] == 1) ) continue;
 	
 	if(muon_tag_index_event == -1 || triplet_sel_index == -1) continue;
 	if(dataset == "MC" && Muon_probe_index == -1) continue;
@@ -801,7 +803,7 @@ int main(int argc, char **argv){
 	  if(BToKstll_B_Lxy[triplet_sel_index] < 6.) continue;
 	}
 
-	isllt = (iL == 1) ? false : true;
+	isllt = (iL == 0) ? true : false;
 
 	isl1l2_lowPt = bool(BToKstll_lep1_isLowPt[triplet_sel_index] == 1 && BToKstll_lep2_isLowPt[triplet_sel_index]== 1);
     isl1_lowPt = bool(BToKstll_lep1_isLowPt[triplet_sel_index]== 1);
