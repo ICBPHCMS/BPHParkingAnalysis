@@ -540,10 +540,12 @@ int main(int argc, char **argv){
   TH1F* hBmass_l1PFLep_l2notPFLep[7];
   TH1F* hBmass_l1notPFLep_l2PFLep[7];
   TH1F* hBmass_l1notPFLep_l2notPFLep[7];
-  TH1F* hBmass_l1l2_PFCand[7];
-  TH1F* hBmass_l2_PFCand[7];
-  TH1F* hBmass_l1l2_LT[7];
-  TH1F* hBmass_l2_LT[7];
+  TH1F* hBmass_l1PFCand_l2PFCand[7];
+  TH1F* hBmass_l1PFCand_l2notPFCand[7];
+  TH1F* hBmass_l1notPFCand_l2PFCand[7];
+  TH1F* hBmass_l1LT_l2LT[7];
+  TH1F* hBmass_l1LT_l2notLT[7];
+  TH1F* hBmass_l1notLT_l2LT[7];
   TH2F* BDTele1_vs_pTele1[7];
   TH2F* BDTele2_vs_pTele2[7];
   TH2F* BDTele2_vs_BDTele1[7];
@@ -610,25 +612,35 @@ int main(int argc, char **argv){
     hBmass_l1notPFLep_l2notPFLep[ij]->SetLineColor(kRed);
     hBmass_l1notPFLep_l2notPFLep[ij]->SetLineWidth(2);   
     
-    hBmass_l1l2_PFCand[ij] = new TH1F(Form("Bmass_l1l2_PFCand_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
-    hBmass_l1l2_PFCand[ij]->Sumw2();
-    hBmass_l1l2_PFCand[ij]->SetLineColor(kRed);
-    hBmass_l1l2_PFCand[ij]->SetLineWidth(2);
+    hBmass_l1PFCand_l2PFCand[ij] = new TH1F(Form("Bmass_l1PFCand_l2PFCand_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1PFCand_l2PFCand[ij]->Sumw2();
+    hBmass_l1PFCand_l2PFCand[ij]->SetLineColor(kRed);
+    hBmass_l1PFCand_l2PFCand[ij]->SetLineWidth(2);
     
-    hBmass_l2_PFCand[ij] = new TH1F(Form("Bmass_l2_PFCand_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
-    hBmass_l2_PFCand[ij]->Sumw2();
-    hBmass_l2_PFCand[ij]->SetLineColor(kRed);
-    hBmass_l2_PFCand[ij]->SetLineWidth(2);
+    hBmass_l1PFCand_l2notPFCand[ij] = new TH1F(Form("Bmass_l1PFCand_l2notPFCand_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1PFCand_l2notPFCand[ij]->Sumw2();
+    hBmass_l1PFCand_l2notPFCand[ij]->SetLineColor(kRed);
+    hBmass_l1PFCand_l2notPFCand[ij]->SetLineWidth(2);
     
-    hBmass_l1l2_LT[ij] = new TH1F(Form("Bmass_l1l2_LT_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
-    hBmass_l1l2_LT[ij]->Sumw2();
-    hBmass_l1l2_LT[ij]->SetLineColor(kRed);
-    hBmass_l1l2_LT[ij]->SetLineWidth(2);
+    hBmass_l1notPFCand_l2PFCand[ij] = new TH1F(Form("Bmass_l1notPFCand_l2PFCand_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1notPFCand_l2PFCand[ij]->Sumw2();
+    hBmass_l1notPFCand_l2PFCand[ij]->SetLineColor(kRed);
+    hBmass_l1notPFCand_l2PFCand[ij]->SetLineWidth(2);
     
-    hBmass_l2_LT[ij] = new TH1F(Form("Bmass_l2_LT_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
-    hBmass_l2_LT[ij]->Sumw2();
-    hBmass_l2_LT[ij]->SetLineColor(kRed);
-    hBmass_l2_LT[ij]->SetLineWidth(2);   
+    hBmass_l1LT_l2LT[ij] = new TH1F(Form("Bmass_l1LT_l2LT_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1LT_l2LT[ij]->Sumw2();
+    hBmass_l1LT_l2LT[ij]->SetLineColor(kRed);
+    hBmass_l1LT_l2LT[ij]->SetLineWidth(2);
+
+    hBmass_l1LT_l2notLT[ij] = new TH1F(Form("Bmass_l1LT_l2notLT_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1LT_l2notLT[ij]->Sumw2();
+    hBmass_l1LT_l2notLT[ij]->SetLineColor(kRed);
+    hBmass_l1LT_l2notLT[ij]->SetLineWidth(2);
+    
+    hBmass_l1notLT_l2LT[ij] = new TH1F(Form("Bmass_l1notLT_l2LT_%d", ij), "", 750, 0., 15.); // 75, 4.5, 6.);
+    hBmass_l1notLT_l2LT[ij]->Sumw2();
+    hBmass_l1notLT_l2LT[ij]->SetLineColor(kRed);
+    hBmass_l1notLT_l2LT[ij]->SetLineWidth(2);   
 
     hctxy[ij] = new TH1F(Form("hctxy_%d", ij), "", 1000, 0., 10.);
     hctxy[ij]->Sumw2();
@@ -744,12 +756,12 @@ int main(int argc, char **argv){
     int muon_tag_index_event = -1;
     int triplet_sel_index = -1;
     bool isllt = false;         
-    bool isl1l2_PFCand = false;
-    bool isl1_PFCand = false;
-    bool isl2_PFCand = false;
-    bool isl1l2_LT = false;
-    bool isl1_LT = false;
-    bool isl2_LT = false;
+    bool l1PFCand_l2PFCand = false;
+    bool l1PFCand_l2notPFCand = false;
+    bool l1notPFCand_l2PFCand = false;
+    bool l1LT_l2LT = false;
+    bool l1LT_l2notLT = false;
+    bool l1notLT_l2LT = false;
     bool l1PFLep_l2notPFLep = false;
     bool l1notPFLep_l2PFLep = false;
     bool l1notPFLep_l2notPFLep = false;
@@ -787,13 +799,13 @@ int main(int argc, char **argv){
 
 	isllt = (iL == 0) ? true : false;
 
-    isl1l2_PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index] == 1 && BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
-    isl1_PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index]== 1);
-    isl2_PFCand = bool(BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
+    l1PFCand_l2PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index] == 1 && BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
+    l1PFCand_l2notPFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index]== 1 && BToKstll_lep2_isPFCand[triplet_sel_index]!= 1);
+    l1notPFCand_l2PFCand = bool(BToKstll_lep1_isPFCand[triplet_sel_index]!= 1 && BToKstll_lep2_isPFCand[triplet_sel_index]== 1);
     
-    isl1l2_LT = bool(BToKstll_lep1_isLT[triplet_sel_index] == 1 && BToKstll_lep2_isLT[triplet_sel_index]== 1);
-    isl1_LT = bool(BToKstll_lep1_isLT[triplet_sel_index]== 1);
-    isl2_LT = bool(BToKstll_lep2_isLT[triplet_sel_index]== 1);
+    l1LT_l2LT = bool(BToKstll_lep1_isLT[triplet_sel_index] == 1 && BToKstll_lep2_isLT[triplet_sel_index]== 1);
+    l1LT_l2notLT = bool(BToKstll_lep1_isLT[triplet_sel_index]== 1 && BToKstll_lep2_isLT[triplet_sel_index]!= 1);
+    l1notLT_l2LT = bool(BToKstll_lep1_isLT[triplet_sel_index]!= 1 && BToKstll_lep2_isLT[triplet_sel_index]== 1);
     
     l1PFLep_l2notPFLep = bool(BToKstll_lep1_isPFLep[triplet_sel_index] == 1 && BToKstll_lep2_isPFLep[triplet_sel_index] != 1);
     l1notPFLep_l2PFLep = bool(BToKstll_lep1_isPFLep[triplet_sel_index] != 1 && BToKstll_lep2_isPFLep[triplet_sel_index] == 1);
@@ -919,6 +931,10 @@ int main(int argc, char **argv){
       hLep2pt[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
       if(l1notPFLep_l2PFLep || l1notPFLep_l2notPFLep)hLep1pt_l1notPFLep[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
       if(l1PFLep_l2notPFLep || l1notPFLep_l2notPFLep)hLep2pt_l2notPFLep[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+      if(l1PFCand_l2notPFCand || l1PFCand_l2PFCand) hLep1pt_PFCand[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+      if(l1notPFCand_l2PFCand || l1PFCand_l2PFCand) hLep2pt_PFCand[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+      if(l1LT_l2notLT || l1LT_l2LT) hLep1pt_LT[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+      if(l1notLT_l2LT || l1LT_l2LT) hLep2pt_LT[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
       if(std::abs(BToKstll_lep1_eta[triplet_sel_index]) < 1.47) hLep1pt_EB[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
       else hLep1pt_EE[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
       if(std::abs(BToKstll_lep2_eta[triplet_sel_index]) < 1.47) hLep2pt_EB[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
@@ -926,24 +942,20 @@ int main(int argc, char **argv){
 
       hllRefitMass[massBin]->Fill(llInvRefitMass);
       hllRefitMass_vs_Bmass[massBin]->Fill(BToKstll_B_mass[triplet_sel_index], llInvRefitMass);
+      
       hBmass[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(isllt) hBmass_llt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      else hBmass_not_llt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      else hBmass_not_llt[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);      
       if(l1PFLep_l2notPFLep) hBmass_l1PFLep_l2notPFLep[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(l1notPFLep_l2PFLep) hBmass_l1notPFLep_l2PFLep[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
       if(l1notPFLep_l2notPFLep) hBmass_l1notPFLep_l2notPFLep[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      if(isl1l2_PFCand) hBmass_l1l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      if(isl1_PFCand) hLep1pt_PFCand[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
-      if(isl2_PFCand){ 
-        hBmass_l2_PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-        hLep2pt_PFCand[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
-      }
-      if(isl1l2_LT) hBmass_l1l2_LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-      if(isl1_LT) hLep1pt_LT[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
-      if(isl2_LT){
-        hBmass_l2_LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
-        hLep2pt_LT[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
-      }
+      if(l1PFCand_l2PFCand) hBmass_l1PFCand_l2PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(l1PFCand_l2notPFCand) hBmass_l1PFCand_l2notPFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(l1notPFCand_l2PFCand) hBmass_l1notPFCand_l2PFCand[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(l1LT_l2LT) hBmass_l1LT_l2LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]); 
+      if(l1LT_l2notLT) hBmass_l1LT_l2notLT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      if(l1notLT_l2LT) hBmass_l1notLT_l2LT[massBin]->Fill(BToKstll_B_mass[triplet_sel_index]);
+      
 
       BDTele1_vs_pTele1[massBin]->Fill(BToKstll_lep1_pt[triplet_sel_index], BToKstll_lep1_seedBDT_unbiased[triplet_sel_index]);
       BDTele2_vs_pTele2[massBin]->Fill(BToKstll_lep2_pt[triplet_sel_index], BToKstll_lep2_seedBDT_unbiased[triplet_sel_index]);
@@ -960,18 +972,12 @@ int main(int argc, char **argv){
     if(l1PFLep_l2notPFLep) hBmass_l1PFLep_l2notPFLep[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(l1notPFLep_l2PFLep) hBmass_l1notPFLep_l2PFLep[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
     if(l1notPFLep_l2notPFLep) hBmass_l1notPFLep_l2notPFLep[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    if(isl1l2_PFCand) hBmass_l1l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    if(isl1_PFCand) hLep1pt_PFCand[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
-    if(isl2_PFCand){
-        hBmass_l2_PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-        hLep2pt_PFCand[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
-    }
-    if(isl1l2_LT) hBmass_l1l2_LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-    if(isl1_LT) hLep1pt_LT[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
-    if(isl2_LT){
-        hBmass_l2_LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
-        hLep2pt_LT[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
-    }
+    if(l1PFCand_l2PFCand) hBmass_l1PFCand_l2PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(l1PFCand_l2notPFCand) hBmass_l1PFCand_l2notPFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(l1notPFCand_l2PFCand) hBmass_l1notPFCand_l2PFCand[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(l1LT_l2LT) hBmass_l1LT_l2LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(l1LT_l2notLT) hBmass_l1LT_l2notLT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
+    if(l1notLT_l2LT) hBmass_l1notLT_l2LT[6]->Fill(BToKstll_B_mass[triplet_sel_index]);
 
     hAlpha[6]->Fill(BToKstll_B_cosAlpha[triplet_sel_index]);
     hCLVtx[6]->Fill(BToKstll_B_CL_vtx[triplet_sel_index]);
@@ -985,6 +991,10 @@ int main(int argc, char **argv){
     hLep2pt[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
     if(l1notPFLep_l2PFLep || l1notPFLep_l2notPFLep)hLep1pt_l1notPFLep[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
     if(l1PFLep_l2notPFLep || l1notPFLep_l2notPFLep)hLep2pt_l2notPFLep[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+    if(l1PFCand_l2notPFCand || l1PFCand_l2PFCand) hLep1pt_PFCand[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+    if(l1notPFCand_l2PFCand || l1PFCand_l2PFCand) hLep2pt_PFCand[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
+    if(l1LT_l2notLT || l1LT_l2LT) hLep1pt_LT[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
+    if(l1notLT_l2LT || l1LT_l2LT) hLep2pt_LT[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
     if(std::abs(BToKstll_lep1_eta[triplet_sel_index]) < 1.47) hLep1pt_EB[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
     else hLep1pt_EE[6]->Fill(BToKstll_lep1_pt[triplet_sel_index]);
     if(std::abs(BToKstll_lep2_eta[triplet_sel_index]) < 1.47) hLep2pt_EB[6]->Fill(BToKstll_lep2_pt[triplet_sel_index]);
@@ -1042,10 +1052,12 @@ int main(int argc, char **argv){
     hBmass_l1notPFLep_l2PFLep[ij]->Write(hBmass_l1notPFLep_l2PFLep[ij]->GetName());
     hBmass_l1PFLep_l2notPFLep[ij]->Write(hBmass_l1PFLep_l2notPFLep[ij]->GetName());
     hBmass_l1notPFLep_l2notPFLep[ij]->Write(hBmass_l1notPFLep_l2notPFLep[ij]->GetName());
-    hBmass_l1l2_PFCand[ij]->Write(hBmass_l1l2_PFCand[ij]->GetName());
-    hBmass_l2_PFCand[ij]->Write(hBmass_l2_PFCand[ij]->GetName());
-    hBmass_l1l2_LT[ij]->Write(hBmass_l1l2_LT[ij]->GetName());
-    hBmass_l2_LT[ij]->Write(hBmass_l2_LT[ij]->GetName());
+    hBmass_l1PFCand_l2PFCand[ij]->Write(hBmass_l1PFCand_l2PFCand[ij]->GetName());
+    hBmass_l1PFCand_l2notPFCand[ij]->Write(hBmass_l1PFCand_l2notPFCand[ij]->GetName());
+    hBmass_l1notPFCand_l2PFCand[ij]->Write(hBmass_l1notPFCand_l2PFCand[ij]->GetName());
+    hBmass_l1LT_l2LT[ij]->Write(hBmass_l1LT_l2LT[ij]->GetName());
+    hBmass_l1LT_l2notLT[ij]->Write(hBmass_l1LT_l2notLT[ij]->GetName());
+    hBmass_l1notLT_l2LT[ij]->Write(hBmass_l1notLT_l2LT[ij]->GetName());
 
     BDTele1_vs_pTele1[ij]->Write(BDTele1_vs_pTele1[ij]->GetName());
     BDTele2_vs_pTele2[ij]->Write(BDTele2_vs_pTele2[ij]->GetName());
