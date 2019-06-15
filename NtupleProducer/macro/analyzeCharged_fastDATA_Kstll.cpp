@@ -795,9 +795,9 @@ int main(int argc, char **argv){
     isl1_LT = bool(BToKstll_lep1_isLT[triplet_sel_index]== 1);
     isl2_LT = bool(BToKstll_lep2_isLT[triplet_sel_index]== 1);
     
-    l1PFLep_l2notPFLep = bool(BToKstll_lep1_isPFCand[triplet_sel_index] == 1 && BToKstll_lep2_isPFCand[triplet_sel_index] != 1);
-    l1notPFLep_l2PFLep = bool(BToKstll_lep1_isPFCand[triplet_sel_index] != 1 && BToKstll_lep2_isPFCand[triplet_sel_index] == 1);
-    l1notPFLep_l2notPFLep = bool(BToKstll_lep1_isPFCand[triplet_sel_index] != 1 && BToKstll_lep2_isPFCand[triplet_sel_index] != 1);    
+    l1PFLep_l2notPFLep = bool(BToKstll_lep1_isPFLep[triplet_sel_index] == 1 && BToKstll_lep2_isPFLep[triplet_sel_index] != 1);
+    l1notPFLep_l2PFLep = bool(BToKstll_lep1_isPFLep[triplet_sel_index] != 1 && BToKstll_lep2_isPFLep[triplet_sel_index] == 1);
+    l1notPFLep_l2notPFLep = bool(BToKstll_lep1_isPFLep[triplet_sel_index] != 1 && BToKstll_lep2_isPFLep[triplet_sel_index] != 1);    
     
 	goodTripletFound = true;
 	break;
