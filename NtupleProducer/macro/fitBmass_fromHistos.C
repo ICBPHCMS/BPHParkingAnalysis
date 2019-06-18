@@ -71,7 +71,6 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
 
   TH1F* h_Bmass[7];
   TH1F* h_Bmass_llt[7];
-  TH1F* h_Bmass_l1notPFLep_l2PFLep[7];
   TH1F* h_Bmass_l1PFLep_l2notPFLep[7];
   TH1F* h_Bmass_l1notPFLep_l2notPFLep[7];
   
@@ -79,7 +78,6 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
     
     h_Bmass[ij] = (TH1F*)inF->Get(Form("Bmass_%d", ij))->Clone(Form("h_Bmass_%d", ij));    
     h_Bmass_llt[ij] = (TH1F*)inF->Get(Form("Bmass_llt_%d", ij))->Clone(Form("h_Bmass_llt_%d", ij));
-    h_Bmass_l1notPFLep_l2PFLep[ij] = (TH1F*)inF->Get(Form("Bmass_l1notPFLep_l2PFLep_%d", ij))->Clone(Form("h_Bmass_l1notPFLep_l2PFLep_%d", ij));
     h_Bmass_l1PFLep_l2notPFLep[ij] = (TH1F*)inF->Get(Form("Bmass_l1PFLep_l2notPFLep_%d", ij))->Clone(Form("h_Bmass_l1PFLep_l2notPFLep_%d", ij));
     h_Bmass_l1notPFLep_l2notPFLep[ij] = (TH1F*)inF->Get(Form("Bmass_l1notPFLep_l2notPFLep_%d", ij))->Clone(Form("h_Bmass_l1notPFLep_l2notPFLep_%d", ij));
     //    h_Bmass[ij]->GetXaxis()->SetRangeUser(4.5, 6.);
@@ -124,7 +122,6 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
     
     RooDataHist hBMass("hBMass", "hBMass", *w.var("x"), Import(*(h_Bmass[ij])));
     RooDataHist hBMass_llt("hBMass_llt", "hBMass_llt", *w.var("x"), Import(*(h_Bmass_llt[ij])));
-    RooDataHist hBMass_l1notPFLep_l2PFLep("hBMass_l1notPFLep_l2PFLep", "hBMass_l1notPFLep_l2PFLep", *w.var("x"), Import(*(h_Bmass_l1notPFLep_l2PFLep[ij])));
     RooDataHist hBMass_l1PFLep_l2notPFLep("hBMass_l1PFLep_l2notPFLep", "hBMass_l1PFLep_l2notPFLep", *w.var("x"), Import(*(h_Bmass_l1PFLep_l2notPFLep[ij])));
     RooDataHist hBMass_l1notPFLep_l2notPFLep("hBMass_l1notPFLep_l2notPFLep", "hBMass_l1notPFLep_l2notPFLep", *w.var("x"), Import(*(h_Bmass_l1notPFLep_l2notPFLep[ij])));
     w.Print();
@@ -148,7 +145,6 @@ void fitBmass_fromHistos(int isEleFinalState, std::string inFile){
     model->plotOn(plot, Components("modelb"),LineStyle(kDashed));
     model->plotOn(plot, Components("smodel"),LineColor(kOrange));
     hBMass_llt.plotOn(plot,LineColor(kGreen+1),MarkerColor(kGreen+1)) ;
-    hBMass_l1notPFLep_l2PFLep.plotOn(plot,LineColor(kCyan+1),MarkerColor(kCyan+1)) ;
     hBMass_l1PFLep_l2notPFLep.plotOn(plot,LineColor(kMagenta),MarkerColor(kMagenta)) ;
     hBMass_l1notPFLep_l2notPFLep.plotOn(plot,LineColor(kRed),MarkerColor(kRed)) ;
     chi2[ij] = plot->chiSquare();
