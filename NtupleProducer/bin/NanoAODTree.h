@@ -20,7 +20,7 @@
 #include <TTree.h>
 
 const int kLeptonMax = 100; // set to 2 times nTriplets
-const int kBToKstllMax = 50;
+const int kBToKstllMax = 100;
 
 const int kMuonMax = 100;
 const int kElectronMax = 100;
@@ -29,7 +29,9 @@ const int kBToKmumuMax = 50000;
 const int kBToKeeMax = 50000;
 const int kGenPartMax = 10000;
 const int kTrigObjMax = 1000;
+const int kLowPtGsfTrackMax = 100;
 const int kPFCandMax = 10000;
+const int kLostTrackMax = 100;
 
 using namespace std;
 
@@ -54,20 +56,35 @@ public :
    bool Muon_softId[kMuonMax];
    bool Muon_mediumId[kMuonMax];
 
+   int BToKstll_configuration[kBToKstllMax];
 
    uint nBToKstll;
    float BToKstll_B_CL_vtx[kBToKstllMax];
+   
    int BToKstll_lep1_charge[kBToKstllMax];
-   int BToKstll_lep1_index[kBToKstllMax];
    float BToKstll_lep1_pt[kBToKstllMax];
    float BToKstll_lep1_eta[kBToKstllMax];
    float BToKstll_lep1_phi[kBToKstllMax];
+   int BToKstll_lep1_index[kBToKstllMax];
+   int BToKstll_lep1_lowPt_index[kBToKstllMax];
+   int BToKstll_lep1_pfCand_index[kBToKstllMax];
+   int BToKstll_lep1_lostTrack_index[kBToKstllMax];
+   int BToKstll_lep1_isPFLep[kBToKstllMax];
+   int BToKstll_lep1_isLowPt[kBToKstllMax];
+   int BToKstll_lep1_isPFCand[kBToKstllMax];
+   
    int BToKstll_lep2_charge[kBToKstllMax];
-   int BToKstll_lep2_index[kBToKstllMax];
    float BToKstll_lep2_pt[kBToKstllMax];
    float BToKstll_lep2_eta[kBToKstllMax];
    float BToKstll_lep2_phi[kBToKstllMax];
+   int BToKstll_lep2_index[kBToKstllMax];
+   int BToKstll_lep2_lowPt_index[kBToKstllMax];
+   int BToKstll_lep2_pfCand_index[kBToKstllMax];
+   int BToKstll_lep2_lostTrack_index[kBToKstllMax];   
    int BToKstll_lep2_isPFLep[kBToKstllMax];
+   int BToKstll_lep2_isLowPt[kBToKstllMax];
+   int BToKstll_lep2_isPFCand[kBToKstllMax];   
+   
    //int BToKstll_kaon_charge[kBToKstllMax];
    float BToKstll_kaon_pt[kBToKstllMax];
    float BToKstll_kaon_eta[kBToKstllMax];
@@ -228,16 +245,30 @@ public :
    float TrigObj_eta[kTrigObjMax];
    float TrigObj_phi[kTrigObjMax];
    int TrigObj_filterBits[kTrigObjMax];
+   
+   uint nLowPtGsfTrack;
+   float LowPtGsfTrack_pt[kLowPtGsfTrackMax];
+   float LowPtGsfTrack_eta[kLowPtGsfTrackMax];
+   float LowPtGsfTrack_phi[kLowPtGsfTrackMax];
+   float LowPtGsfTrack_charge[kLowPtGsfTrackMax];
+   float LowPtGsfTrack_seedBDT_unbiased[kLowPtGsfTrackMax];
 
    uint nPFCand;
    float PFCand_pt[kPFCandMax];
    float PFCand_eta[kPFCandMax];
    float PFCand_phi[kPFCandMax];
+   float PFCand_charge[kPFCandMax];
    float PFCand_mass[kPFCandMax];
    int PFCand_pdgId[kPFCandMax];
    float PFCand_DCASig[kPFCandMax];
    float PFCand_dz[kPFCandMax];
 
+   uint nLostTrack;
+   float LostTrack_pt[kLostTrackMax];
+   float LostTrack_eta[kLostTrackMax];
+   float LostTrack_phi[kLostTrackMax];
+   float LostTrack_charge[kLostTrackMax];
+   
    // methods
    NanoAODTree (TChain* tree);
    ~NanoAODTree();
@@ -297,18 +328,30 @@ void NanoAODTree::Init(TChain* tree)
 
   int BToKstll_info = _tree->SetBranchAddress("nBToKstll",&nBToKstll);
   if(BToKstll_info >= 0){
+    _tree->SetBranchAddress("BToKstll_configuration",&BToKstll_configuration);
     _tree->SetBranchAddress("BToKstll_B_CL_vtx",&BToKstll_B_CL_vtx);
     _tree->SetBranchAddress("BToKstll_lep1_charge",&BToKstll_lep1_charge);
-    _tree->SetBranchAddress("BToKstll_lep1_index",&BToKstll_lep1_index);
     _tree->SetBranchAddress("BToKstll_lep1_pt",&BToKstll_lep1_pt);
     _tree->SetBranchAddress("BToKstll_lep1_eta",&BToKstll_lep1_eta);
     _tree->SetBranchAddress("BToKstll_lep1_phi",&BToKstll_lep1_phi);
+    _tree->SetBranchAddress("BToKstll_lep1_index",&BToKstll_lep1_index);
+    _tree->SetBranchAddress("BToKstll_lep1_lowPt_index",&BToKstll_lep1_lowPt_index);
+    _tree->SetBranchAddress("BToKstll_lep1_pfCand_index",&BToKstll_lep1_pfCand_index);
+    _tree->SetBranchAddress("BToKstll_lep1_lostTrack_index",&BToKstll_lep1_lostTrack_index);
+    _tree->SetBranchAddress("BToKstll_lep1_isPFLep",&BToKstll_lep1_isPFLep);
+    _tree->SetBranchAddress("BToKstll_lep1_isLowPt",&BToKstll_lep1_isLowPt);
+    _tree->SetBranchAddress("BToKstll_lep1_isPFCand",&BToKstll_lep1_isPFCand);
     _tree->SetBranchAddress("BToKstll_lep2_charge",&BToKstll_lep2_charge);
-    _tree->SetBranchAddress("BToKstll_lep2_index",&BToKstll_lep2_index);
     _tree->SetBranchAddress("BToKstll_lep2_pt",&BToKstll_lep2_pt);
     _tree->SetBranchAddress("BToKstll_lep2_eta",&BToKstll_lep2_eta);
     _tree->SetBranchAddress("BToKstll_lep2_phi",&BToKstll_lep2_phi);
+    _tree->SetBranchAddress("BToKstll_lep2_index",&BToKstll_lep2_index);
+    _tree->SetBranchAddress("BToKstll_lep2_lowPt_index",&BToKstll_lep2_lowPt_index);
+    _tree->SetBranchAddress("BToKstll_lep2_pfCand_index",&BToKstll_lep2_pfCand_index);
+    _tree->SetBranchAddress("BToKstll_lep2_lostTrack_index",&BToKstll_lep2_lostTrack_index);    
     _tree->SetBranchAddress("BToKstll_lep2_isPFLep",&BToKstll_lep2_isPFLep);
+    _tree->SetBranchAddress("BToKstll_lep2_isLowPt",&BToKstll_lep2_isLowPt);
+    _tree->SetBranchAddress("BToKstll_lep2_isPFCand",&BToKstll_lep2_isPFCand);
     //_tree->SetBranchAddress("BToKstll_kaon_charge",&BToKstll_kaon_charge);
     _tree->SetBranchAddress("BToKstll_kaon_pt",&BToKstll_kaon_pt);
     _tree->SetBranchAddress("BToKstll_kaon_eta",&BToKstll_kaon_eta);
@@ -468,18 +511,36 @@ void NanoAODTree::Init(TChain* tree)
   _tree->SetBranchAddress("TrigObj_eta",&TrigObj_eta);
   _tree->SetBranchAddress("TrigObj_phi",&TrigObj_phi);
   _tree->SetBranchAddress("TrigObj_filterBits",&TrigObj_filterBits);
-  
+
+  int LowPtGsfTrack_info = _tree->SetBranchAddress("nLowPtGsfTrack",&nLowPtGsfTrack);
+  if(LowPtGsfTrack_info){
+    _tree->SetBranchAddress("LowPtGsfTrack_pt",&LowPtGsfTrack_pt);
+    _tree->SetBranchAddress("LowPtGsfTrack_eta",&LowPtGsfTrack_eta);
+    _tree->SetBranchAddress("LowPtGsfTrack_phi",&LowPtGsfTrack_phi);
+    _tree->SetBranchAddress("LowPtGsfTrack_charge",&LowPtGsfTrack_charge);
+    _tree->SetBranchAddress("LowPtGsfTrack_seedBDT_unbiased",&LowPtGsfTrack_seedBDT_unbiased);
+  }
+
   int PFCand_info = _tree->SetBranchAddress("nPFCand",&nPFCand);
   if(PFCand_info){
     _tree->SetBranchAddress("PFCand_pt",&PFCand_pt);
     _tree->SetBranchAddress("PFCand_eta",&PFCand_eta);
     _tree->SetBranchAddress("PFCand_phi",&PFCand_phi);
+    _tree->SetBranchAddress("PFCand_charge",&PFCand_charge);
     _tree->SetBranchAddress("PFCand_mass",&PFCand_mass);
     _tree->SetBranchAddress("PFCand_pdgId",&PFCand_pdgId);
     _tree->SetBranchAddress("PFCand_DCASig",&PFCand_DCASig);
     _tree->SetBranchAddress("PFCand_dz",&PFCand_dz);
   }
-
+  
+  int LostTrack_info = _tree->SetBranchAddress("nLostTrack",&nLostTrack);
+  if(LostTrack_info){
+    _tree->SetBranchAddress("LostTrack_pt",&LostTrack_pt);
+    _tree->SetBranchAddress("LostTrack_eta",&LostTrack_eta);
+    _tree->SetBranchAddress("LostTrack_phi",&LostTrack_phi);
+    _tree->SetBranchAddress("LostTrack_charge",&LostTrack_charge);
+  }
+    
 }
 
 
@@ -495,7 +556,9 @@ Int_t NanoAODTree::GetEntry(int entry)
   if(nBToKee>kBToKeeMax) return -1;
   if(nGenPart>kGenPartMax) return -1;
   if(nTrigObj>kTrigObjMax)  return -1;
+  if(nLowPtGsfTrack>kLowPtGsfTrackMax) return -1;
   if(nPFCand>kPFCandMax) return -1;
+  if(nLostTrack>kLostTrackMax) return -1;
 
   return out;
 
@@ -511,4 +574,4 @@ TChain* NanoAODTree::GetTree()
     return _tree;
 }
 
-#endif
+#endif 
