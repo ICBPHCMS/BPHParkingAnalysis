@@ -452,7 +452,7 @@ int main(int argc, char **argv){
 
 	if(debug) std::cout << " >>> lep2_isPFLep = " << lep2_isPFLep 
 			    << " best_Bll_CL_vtx = " << best_Bll_CL_vtx << std::endl;
-	if(lep2_isPFLep == 1 && (best_Bll_CL_vtx < 0. || B_CL_vtx > best_Bll_CL_vtx)){
+	if(lep1_isPFLep == 1 && lep2_isPFLep == 1 && (best_Bll_CL_vtx < 0. || B_CL_vtx > best_Bll_CL_vtx)){
 	  best_Bll_CL_vtx = B_CL_vtx;
 	  _BToKstll_llsel_index = i_Btree;
 	}
