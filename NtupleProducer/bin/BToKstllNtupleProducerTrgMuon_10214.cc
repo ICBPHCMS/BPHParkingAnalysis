@@ -1,4 +1,4 @@
-// BToKstllNtupleProducerTrgMuon_10214 --isMC (0,1,2) --isResonant (0, 1, -1) --isEleFS (0, 1) --isKstFS (0, 1) --isLT (0, 1) --output ("outfile") --input ("inputFile")
+// BToKstllNtupleProducerTrgMuon_10214 --isMC (0,1,2) --isResonant (0, 1, -1) --isEleFS (0, 1) --isKstFS (0, 1) --output ("outfile") --input ("inputFile")
 
 // new features => gen_index refers to the closest in dR - provided gen B and decays are within acceptance -, 
 //                 no minimum dR required
@@ -375,61 +375,45 @@ int main(int argc, char **argv){
         int lep2_isLowPt  = tree->BToKstll_lep2_isLowPt[i_Btree];
         int lep2_isPFCand = tree->BToKstll_lep2_isPFCand[i_Btree];        
         
-        if(isEleFinalState == 1){
 
             _BToKstll_lep1_pt[i_Btree] = configuration==0 ? 
-                (lep1_isPFLep == 1 ? tree->Electron_pt[lep1_PFLep_index] : tree->LowPtGsfTrack_pt[lep1_lowPt_index]) : -1;
+                (lep1_isPFLep == 1 ? tree->Electron_pt[lep1_PFLep_index] : tree->LowPtGsfTrack_pt[lep1_lowPt_index]) :
+                ( lep1_isPFLep == 1 ? tree->Muon_pt[lep1_PFLep_index] : 
+                    (lep1_isPFCand == 1 ? tree->PFCand_pt[lep1_pfCand_index] : tree->LostTrack_pt[lep1_lostTrack_index]) );                
             _BToKstll_lep1_eta[i_Btree] = configuration==0 ? 
-                (lep1_isPFLep == 1 ? tree->Electron_eta[lep1_PFLep_index] : tree->LowPtGsfTrack_eta[lep1_lowPt_index]) : 100;
+                (lep1_isPFLep == 1 ? tree->Electron_eta[lep1_PFLep_index] : tree->LowPtGsfTrack_eta[lep1_lowPt_index]) :
+                ( lep1_isPFLep == 1 ? tree->Muon_eta[lep1_PFLep_index] : 
+                    (lep1_isPFCand == 1 ? tree->PFCand_eta[lep1_pfCand_index] : tree->LostTrack_eta[lep1_lostTrack_index]) );
             _BToKstll_lep1_phi[i_Btree] = configuration==0 ? 
-                (lep1_isPFLep == 1 ? tree->Electron_phi[lep1_PFLep_index] : tree->LowPtGsfTrack_phi[lep1_lowPt_index]) : 100;
+                (lep1_isPFLep == 1 ? tree->Electron_phi[lep1_PFLep_index] : tree->LowPtGsfTrack_phi[lep1_lowPt_index]) :
+                ( lep1_isPFLep == 1 ? tree->Muon_phi[lep1_PFLep_index] : 
+                    (lep1_isPFCand == 1 ? tree->PFCand_phi[lep1_pfCand_index] : tree->LostTrack_phi[lep1_lostTrack_index]) );                
             _BToKstll_lep1_charge[i_Btree] = configuration==0 ? 
-                (lep1_isPFLep == 1 ? tree->Electron_charge[lep1_PFLep_index] : tree->LowPtGsfTrack_charge[lep1_lowPt_index]) : 0;
+                (lep1_isPFLep == 1 ? tree->Electron_charge[lep1_PFLep_index] : tree->LowPtGsfTrack_charge[lep1_lowPt_index]) :
+                ( lep1_isPFLep == 1 ? tree->Muon_charge[lep1_PFLep_index] : 
+                    (lep1_isPFCand == 1 ? tree->PFCand_charge[lep1_pfCand_index] : tree->LostTrack_charge[lep1_lostTrack_index]) );
             _BToKstll_lep1_seedBDT_unbiased[i_Btree] = (configuration==0 && lep1_isLowPt==1) ? 
                 tree->LowPtGsfTrack_seedBDT_unbiased[lep1_lowPt_index] : -1;
 
             _BToKstll_lep2_pt[i_Btree] = configuration==0 ? 
-                (lep2_isPFLep == 1 ? tree->Electron_pt[lep2_PFLep_index] : tree->LowPtGsfTrack_pt[lep2_lowPt_index]) : -1;
+                (lep2_isPFLep == 1 ? tree->Electron_pt[lep2_PFLep_index] : tree->LowPtGsfTrack_pt[lep2_lowPt_index]) :
+                ( lep2_isPFLep == 1 ? tree->Muon_pt[lep2_PFLep_index] : 
+                    (lep2_isPFCand == 1 ? tree->PFCand_pt[lep2_pfCand_index] : tree->LostTrack_pt[lep2_lostTrack_index]) );                
             _BToKstll_lep2_eta[i_Btree] = configuration==0 ? 
-                (lep2_isPFLep == 1 ? tree->Electron_eta[lep2_PFLep_index] : tree->LowPtGsfTrack_eta[lep2_lowPt_index]) : 100;
+                (lep2_isPFLep == 1 ? tree->Electron_eta[lep2_PFLep_index] : tree->LowPtGsfTrack_eta[lep2_lowPt_index]) :
+                ( lep2_isPFLep == 1 ? tree->Muon_eta[lep2_PFLep_index] : 
+                    (lep2_isPFCand == 1 ? tree->PFCand_eta[lep2_pfCand_index] : tree->LostTrack_eta[lep2_lostTrack_index]) );                
             _BToKstll_lep2_phi[i_Btree] = configuration==0 ? 
-                (lep1_isPFLep == 1 ? tree->Electron_phi[lep2_PFLep_index] : tree->LowPtGsfTrack_phi[lep2_lowPt_index]) : 100;
+                (lep1_isPFLep == 1 ? tree->Electron_phi[lep2_PFLep_index] : tree->LowPtGsfTrack_phi[lep2_lowPt_index]) :
+                ( lep2_isPFLep == 1 ? tree->Muon_phi[lep2_PFLep_index] : 
+                    (lep2_isPFCand == 1 ? tree->PFCand_phi[lep2_pfCand_index] : tree->LostTrack_phi[lep2_lostTrack_index]) );                
             _BToKstll_lep2_charge[i_Btree] = configuration==0 ? 
-                (lep2_isPFLep == 1 ? tree->Electron_charge[lep2_PFLep_index] : tree->LowPtGsfTrack_charge[lep2_lowPt_index]) : 0;                
+                (lep2_isPFLep == 1 ? tree->Electron_charge[lep2_PFLep_index] : tree->LowPtGsfTrack_charge[lep2_lowPt_index]) :
+                ( lep2_isPFLep == 1 ? tree->Muon_charge[lep2_PFLep_index] : 
+                    (lep2_isPFCand == 1 ? tree->PFCand_charge[lep2_pfCand_index] : tree->LostTrack_charge[lep2_lostTrack_index]) );                
             _BToKstll_lep2_seedBDT_unbiased[i_Btree] = (configuration==0 && lep2_isLowPt==1) ? 
                 tree->LowPtGsfTrack_seedBDT_unbiased[lep2_lowPt_index] : -1;
-
-        }
-        else{
-
-            _BToKstll_lep1_pt[i_Btree] = configuration==1 ? 
-                ( lep1_isPFLep == 1 ? tree->Muon_pt[lep1_PFLep_index] : 
-                    (lep1_isPFCand == 1 ? tree->PFCand_pt[lep1_pfCand_index] : tree->LostTrack_pt[lep1_lostTrack_index]) ) : -1;            
-            _BToKstll_lep1_eta[i_Btree] = configuration==1 ? 
-                ( lep1_isPFLep == 1 ? tree->Muon_eta[lep1_PFLep_index] : 
-                    (lep1_isPFCand == 1 ? tree->PFCand_eta[lep1_pfCand_index] : tree->LostTrack_eta[lep1_lostTrack_index]) ) : 100;
-            _BToKstll_lep1_phi[i_Btree] = configuration==1 ? 
-                ( lep1_isPFLep == 1 ? tree->Muon_phi[lep1_PFLep_index] : 
-                    (lep1_isPFCand == 1 ? tree->PFCand_phi[lep1_pfCand_index] : tree->LostTrack_phi[lep1_lostTrack_index]) ) : 100;   
-            _BToKstll_lep1_charge[i_Btree] = configuration==1 ? 
-                ( lep1_isPFLep == 1 ? tree->Muon_charge[lep1_PFLep_index] : 
-                    (lep1_isPFCand == 1 ? tree->PFCand_charge[lep1_pfCand_index] : tree->LostTrack_charge[lep1_lostTrack_index]) ) : 0;
-
-            _BToKstll_lep2_pt[i_Btree] = configuration==1 ? 
-                ( lep2_isPFLep == 1 ? tree->Muon_pt[lep2_PFLep_index] : 
-                    (lep2_isPFCand == 1 ? tree->PFCand_pt[lep2_pfCand_index] : tree->LostTrack_pt[lep2_lostTrack_index]) ) : -1;            
-            _BToKstll_lep2_eta[i_Btree] = configuration==1 ? 
-                ( lep2_isPFLep == 1 ? tree->Muon_eta[lep2_PFLep_index] : 
-                    (lep2_isPFCand == 1 ? tree->PFCand_eta[lep2_pfCand_index] : tree->LostTrack_eta[lep2_lostTrack_index]) ) : 100;
-            _BToKstll_lep2_phi[i_Btree] = configuration==1 ? 
-                ( lep2_isPFLep == 1 ? tree->Muon_phi[lep2_PFLep_index] : 
-                    (lep2_isPFCand == 1 ? tree->PFCand_phi[lep2_pfCand_index] : tree->LostTrack_phi[lep2_lostTrack_index]) ) : 100;   
-            _BToKstll_lep2_charge[i_Btree] = configuration==1 ? 
-                ( lep2_isPFLep == 1 ? tree->Muon_charge[lep2_PFLep_index] : 
-                    (lep2_isPFCand == 1 ? tree->PFCand_charge[lep2_pfCand_index] : tree->LostTrack_charge[lep2_lostTrack_index]) ) : 0;                     
-        }
-
-        if( (isEleFinalState && configuration==1) || (!isEleFinalState && configuration==0) ) continue;        
+        
         
       //already applied in nanoAOD production
       if(_BToKstll_lep1_charge[i_Btree] * _BToKstll_lep2_charge[i_Btree] > 0.) continue;
@@ -758,6 +742,4 @@ int main(int argc, char **argv){
   f_new->Close();
   return 0;
 
-}
-
-
+} 
