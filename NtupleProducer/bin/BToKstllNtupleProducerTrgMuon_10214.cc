@@ -597,8 +597,6 @@ int main(int argc, char **argv){
 	float best_dR = -1.;
 	
 	for(int i_Btree=0; i_Btree<nBinTree; ++i_Btree){
-        
-      if( (isEleFinalState && tree->BToKstll_configuration[i_Btree]==1) || (!isEleFinalState && tree->BToKstll_configuration[i_Btree]==0) ) continue;
 
 	  TLorentzVector kaon_tlv;
 	  TLorentzVector lep1_tlv;
