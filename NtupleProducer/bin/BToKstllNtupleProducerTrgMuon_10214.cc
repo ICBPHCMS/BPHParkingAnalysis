@@ -212,13 +212,17 @@ int main(int argc, char **argv){
   std::vector<float> _BToKstll_lep1_pt;
   std::vector<float> _BToKstll_lep1_eta;
   std::vector<float> _BToKstll_lep1_phi;
-  std::vector<float> _BToKstll_lep1_charge;
+  std::vector<int> _BToKstll_lep1_charge;
   std::vector<float> _BToKstll_lep1_seedBDT_unbiased;
   std::vector<float> _BToKstll_lep2_pt;
   std::vector<float> _BToKstll_lep2_eta;
   std::vector<float> _BToKstll_lep2_phi;
-  std::vector<float> _BToKstll_lep2_charge;
-  std::vector<float> _BToKstll_lep2_seedBDT_unbiased;   
+  std::vector<int> _BToKstll_lep2_charge;
+  std::vector<float> _BToKstll_lep2_seedBDT_unbiased;
+  std::vector<float> _BToKstll_kaon_pt;
+  std::vector<float> _BToKstll_kaon_eta;
+  std::vector<float> _BToKstll_kaon_phi;
+  std::vector<int> _BToKstll_kaon_charge;  
 
   tree_new->Branch("BToKstll_sel_index",&_BToKstll_sel_index,"BToKstll_sel_index/I");
   tree_new->Branch("BToKstll_llsel_index",&_BToKstll_llsel_index,"BToKstll_llsel_index/I");
@@ -237,6 +241,10 @@ int main(int argc, char **argv){
   tree_new->Branch("BToKstll_lep2_phi",&_BToKstll_lep2_phi);
   tree_new->Branch("BToKstll_lep2_charge",&_BToKstll_lep2_charge);
   tree_new->Branch("BToKstll_lep2_seedBDT_unbiased",&_BToKstll_lep2_seedBDT_unbiased);
+  tree_new->Branch("BToKstll_kaon_pt",&_BToKstll_kaon_pt);
+  tree_new->Branch("BToKstll_kaon_eta",&_BToKstll_kaon_eta);
+  tree_new->Branch("BToKstll_kaon_phi",&_BToKstll_kaon_phi);
+  tree_new->Branch("BToKstll_kaon_charge",&_BToKstll_kaon_charge);  
   
   int _GenPart_BToKstll_index = -1;
   int _GenPart_JPsiFromB_index = -1;
@@ -316,7 +324,11 @@ int main(int argc, char **argv){
     _BToKstll_lep2_eta.clear();
     _BToKstll_lep2_phi.clear();
     _BToKstll_lep2_charge.clear();
-    _BToKstll_lep2_seedBDT_unbiased.clear();    
+    _BToKstll_lep2_seedBDT_unbiased.clear();
+    _BToKstll_kaon_pt.clear();
+    _BToKstll_kaon_eta.clear();
+    _BToKstll_kaon_phi.clear();
+    _BToKstll_kaon_charge.clear();    
 
     _GenPart_BToKstll_index = -1;
     _GenPart_JPsiFromB_index = -1;
@@ -351,7 +363,11 @@ int main(int argc, char **argv){
     _BToKstll_lep2_eta.resize(nBinTree);
     _BToKstll_lep2_phi.resize(nBinTree);
     _BToKstll_lep2_charge.resize(nBinTree);
-    _BToKstll_lep2_seedBDT_unbiased.resize(nBinTree);    
+    _BToKstll_lep2_seedBDT_unbiased.resize(nBinTree);
+    _BToKstll_kaon_pt.resize(nBinTree);
+    _BToKstll_kaon_eta.resize(nBinTree);
+    _BToKstll_kaon_phi.resize(nBinTree);
+    _BToKstll_kaon_charge.resize(nBinTree);    
 
     if(debug) std::cout << " >>> nBinTree = " << nBinTree << std::endl;
     
@@ -365,15 +381,18 @@ int main(int argc, char **argv){
         int lep2_lowPt_index = tree->BToKstll_lep2_lowPt_index[i_Btree];
         int lep1_pfCand_index = tree->BToKstll_lep1_pfCand_index[i_Btree];
         int lep2_pfCand_index = tree->BToKstll_lep2_pfCand_index[i_Btree];
+        int kaon_pfCand_index = tree->BToKstll_kaon_index[i_Btree];
         int lep1_lostTrack_index = tree->BToKstll_lep1_lostTrack_index[i_Btree];
         int lep2_lostTrack_index = tree->BToKstll_lep2_lostTrack_index[i_Btree];
+        int kaon_lostTrack_index = tree->BToKstll_kaon_lostTrack_index[i_Btree];
 
         int lep1_isPFLep  = tree->BToKstll_lep1_isPFLep[i_Btree];
         int lep1_isLowPt  = tree->BToKstll_lep1_isLowPt[i_Btree];
         int lep1_isPFCand = tree->BToKstll_lep1_isPFCand[i_Btree];
         int lep2_isPFLep  = tree->BToKstll_lep2_isPFLep[i_Btree];
         int lep2_isLowPt  = tree->BToKstll_lep2_isLowPt[i_Btree];
-        int lep2_isPFCand = tree->BToKstll_lep2_isPFCand[i_Btree];        
+        int lep2_isPFCand = tree->BToKstll_lep2_isPFCand[i_Btree];
+        int kaon_isPFCand = tree->BToKstll_kaon_isPFCand[i_Btree];
         
 
             _BToKstll_lep1_pt[i_Btree] = configuration==0 ? 
@@ -415,6 +434,11 @@ int main(int argc, char **argv){
                 tree->LowPtGsfTrack_seedBDT_unbiased[lep2_lowPt_index] : -1;
         
         
+            _BToKstll_kaon_pt[i_Btree] = kaon_isPFCand == 1 ? tree->PFCand_pt[kaon_pfCand_index] : tree->LostTrack_pt[kaon_lostTrack_index];
+            _BToKstll_kaon_eta[i_Btree] = kaon_isPFCand == 1 ? tree->PFCand_eta[kaon_pfCand_index] : tree->LostTrack_eta[kaon_lostTrack_index];
+            _BToKstll_kaon_phi[i_Btree] = kaon_isPFCand == 1 ? tree->PFCand_phi[kaon_pfCand_index] : tree->LostTrack_phi[kaon_lostTrack_index];
+            _BToKstll_kaon_charge[i_Btree] = kaon_isPFCand == 1 ? tree->PFCand_charge[kaon_pfCand_index] : tree->LostTrack_charge[kaon_lostTrack_index];
+                
       //already applied in nanoAOD production
       if(_BToKstll_lep1_charge[i_Btree] * _BToKstll_lep2_charge[i_Btree] > 0.) continue;
 
@@ -602,9 +626,9 @@ int main(int argc, char **argv){
 	  TLorentzVector lep1_tlv;
 	  TLorentzVector lep2_tlv;
 
-	  kaon_tlv.SetPtEtaPhiM(tree->BToKstll_kaon_pt[i_Btree],
-				tree->BToKstll_kaon_eta[i_Btree],
-				tree->BToKstll_kaon_phi[i_Btree],
+	  kaon_tlv.SetPtEtaPhiM(_BToKstll_kaon_pt[i_Btree],
+				_BToKstll_kaon_eta[i_Btree],
+				_BToKstll_kaon_phi[i_Btree],
 				KaonMass_);
 	  lep1_tlv.SetPtEtaPhiM(_BToKstll_lep1_pt[i_Btree],
 				_BToKstll_lep1_eta[i_Btree],
