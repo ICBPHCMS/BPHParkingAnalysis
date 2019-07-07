@@ -20,7 +20,7 @@
 #include <TTree.h>
 
 const int kLeptonMax = 100; // set to 2 times nTriplets
-const int kBToKstllMax = 100;
+const int kBToKstllMax = 2000;
 
 const int kMuonMax = 100;
 const int kElectronMax = 100;
@@ -90,7 +90,9 @@ public :
    float BToKstll_kaon_eta[kBToKstllMax];
    float BToKstll_kaon_phi[kBToKstllMax];
    int BToKstll_muTrg_index[kBToKstllMax];
-
+   int BToKstll_kaon_index[kBToKstllMax];
+   int BToKstll_kaon_lostTrack_index[kBToKstllMax];
+   int BToKstll_kaon_isPFCand[kBToKstllMax];
 
    uint nElectron;
    int Electron_charge[kElectronMax];
@@ -357,6 +359,9 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("BToKstll_kaon_eta",&BToKstll_kaon_eta);
     _tree->SetBranchAddress("BToKstll_kaon_phi",&BToKstll_kaon_phi);
     _tree->SetBranchAddress("BToKstll_muTrg_index",&BToKstll_muTrg_index);
+    _tree->SetBranchAddress("BToKstll_kaon_index",&BToKstll_kaon_index);
+    _tree->SetBranchAddress("BToKstll_kaon_lostTrack_index",&BToKstll_kaon_lostTrack_index);
+    _tree->SetBranchAddress("BToKstll_kaon_isPFCand",&BToKstll_kaon_isPFCand);
   }
 
 
@@ -574,4 +579,4 @@ TChain* NanoAODTree::GetTree()
     return _tree;
 }
 
-#endif 
+#endif  
