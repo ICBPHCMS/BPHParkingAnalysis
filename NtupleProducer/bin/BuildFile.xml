@@ -2,6 +2,10 @@
     <use name="tensorflow-cc" />
 </bin>
 
+<bin name="BToKstllNtupleProducer_BParkingNANO" file="BToKstllNtupleProducer_BParkingNANO.cc">
+    <use name="root" />
+</bin>
+
 <bin name="BToKstllNtupleProducer" file="BToKstllNtupleProducer.cc">
     <use name="root" />
 </bin>
