@@ -200,6 +200,35 @@ int main(int argc, char **argv){
   std::vector<int> _Muon_tag_index_KEE; //Probe muon with selection algo.
   std::vector<int> _Muon_tag_index_KMuMu;
   int _Muon_probe_index = -1; //Probe muon for Acc.xEff. = _Muon_sel_index in data
+  
+  std::vector<float> _Electron_lead_pt;
+  std::vector<float> _Electron_sublead_pt;
+  std::vector<float> _Electron_lead_eta;
+  std::vector<float> _Electron_sublead_eta;
+  std::vector<float> _Electron_lead_phi;
+  std::vector<float> _Electron_sublead_phi;  
+  std::vector<int> _Electron_lead_charge;
+  std::vector<int> _Electron_sublead_charge;
+  std::vector<int> _Electron_lead_isPF;
+  std::vector<int> _Electron_sublead_isPF;
+  std::vector<int> _Electron_lead_isLowPt;
+  std::vector<int> _Electron_sublead_isLowPt;  
+  std::vector<float> _Muon_lead_pt;
+  std::vector<float> _Muon_sublead_pt;
+  std::vector<float> _Muon_lead_eta;
+  std::vector<float> _Muon_sublead_eta;
+  std::vector<float> _Muon_lead_phi;
+  std::vector<float> _Muon_sublead_phi;
+  std::vector<int> _Muon_lead_charge;
+  std::vector<int> _Muon_sublead_charge;
+  std::vector<int> _Muon_lead_isPFcand;
+  std::vector<int> _Muon_sublead_isPFcand; 
+  std::vector<float> _Kaon_KEE_pt;
+  std::vector<float> _Kaon_KMuMu_pt;
+  std::vector<float> _Kaon_KEE_eta;
+  std::vector<float> _Kaon_KMuMu_eta;
+  std::vector<float> _Kaon_KEE_phi;
+  std::vector<float> _Kaon_KMuMu_phi;  
 
   tree_new->Branch("BToKstll_sel_index_KEE",&_BToKstll_sel_index_KEE,"BToKstll_sel_index_KEE/I");
   tree_new->Branch("BToKstll_sel_index_KMuMu",&_BToKstll_sel_index_KMuMu,"BToKstll_sel_index_KMuMu/I");
@@ -211,6 +240,34 @@ int main(int argc, char **argv){
   tree_new->Branch("Muon_tag_index_KMuMu",&_Muon_tag_index_KMuMu);
   tree_new->Branch("Muon_probe_index",&_Muon_probe_index,"Muon_probe_index/I");
 
+  tree_new->Branch("Electron_lead_pt",&_Electron_lead_pt);
+  tree_new->Branch("Electron_sublead_pt",&_Electron_sublead_pt);
+  tree_new->Branch("Electron_lead_eta",&_Electron_lead_eta);
+  tree_new->Branch("Electron_sublead_eta",&_Electron_sublead_eta);
+  tree_new->Branch("Electron_lead_phi",&_Electron_lead_phi);
+  tree_new->Branch("Electron_sublead_phi",&_Electron_sublead_phi);
+  tree_new->Branch("Electron_lead_charge",&_Electron_lead_charge);
+  tree_new->Branch("Electron_sublead_charge",&_Electron_sublead_charge);
+  tree_new->Branch("Electron_lead_isPF",&_Electron_lead_isPF);
+  tree_new->Branch("Electron_sublead_isPF",&_Electron_sublead_isPF);
+  tree_new->Branch("Electron_lead_isLowPt",&_Electron_lead_isLowPt);
+  tree_new->Branch("Electron_sublead_isLowPt",&_Electron_sublead_isLowPt);  
+  tree_new->Branch("Muon_lead_pt",&_Muon_lead_pt);
+  tree_new->Branch("Muon_sublead_pt",&_Muon_sublead_pt);
+  tree_new->Branch("Muon_lead_eta",&_Muon_lead_eta);
+  tree_new->Branch("Muon_sublead_eta",&_Muon_sublead_eta);
+  tree_new->Branch("Muon_lead_phi",&_Muon_lead_phi);
+  tree_new->Branch("Muon_sublead_phi",&_Muon_sublead_phi);
+  tree_new->Branch("Muon_lead_charge",&_Muon_lead_charge);
+  tree_new->Branch("Muon_sublead_charge",&_Muon_sublead_charge);
+  tree_new->Branch("Muon_lead_isPFcand",&_Muon_lead_isPFcand);
+  tree_new->Branch("Muon_sublead_isPFcand",&_Muon_sublead_isPFcand);  
+  tree_new->Branch("Kaon_KEE_pt",&_Kaon_KEE_pt);
+  tree_new->Branch("Kaon_KMuMu_pt",&_Kaon_KMuMu_pt);
+  tree_new->Branch("Kaon_KEE_eta",&_Kaon_KEE_eta);
+  tree_new->Branch("Kaon_KMuMu_eta",&_Kaon_KMuMu_eta);
+  tree_new->Branch("Kaon_KEE_phi",&_Kaon_KEE_phi);
+  tree_new->Branch("Kaon_KMuMu_phi",&_Kaon_KMuMu_phi);  
 
   int _GenPart_BToKstll_index = -1;
   int _GenPart_JPsiFromB_index = -1;
@@ -250,11 +307,7 @@ int main(int argc, char **argv){
   }
 
 
-
-  bool _Muon_isHLT_BPHParking[kMuonMax];
-  tree_new->Branch("Muon_isHLT_BPHParking",_Muon_isHLT_BPHParking,"Muon_isHLT_BPHParking[nMuon]/O");
   
-
   int nentries = tree->GetEntries();
   std::cout << " Nentries = " << nentries << std::endl;
   std::cout << " isMC = " << isMC << std::endl;
@@ -283,6 +336,35 @@ int main(int argc, char **argv){
     _Muon_tag_index_KEE.clear();
     _Muon_tag_index_KMuMu.clear();
     _Muon_probe_index = -1;
+    
+    _Electron_lead_pt.clear();
+    _Electron_sublead_pt.clear();
+    _Electron_lead_eta.clear();
+    _Electron_sublead_eta.clear();
+    _Electron_lead_phi.clear();
+    _Electron_sublead_phi.clear();  
+    _Electron_lead_charge.clear();
+    _Electron_sublead_charge.clear();
+    _Electron_lead_isPF.clear();
+    _Electron_sublead_isPF.clear();
+    _Electron_lead_isLowPt.clear();
+    _Electron_sublead_isLowPt.clear();    
+    _Muon_lead_pt.clear();
+    _Muon_sublead_pt.clear();
+    _Muon_lead_eta.clear();
+    _Muon_sublead_eta.clear();
+    _Muon_lead_phi.clear();
+    _Muon_sublead_phi.clear();
+    _Muon_lead_charge.clear();
+    _Muon_sublead_charge.clear();
+    _Muon_lead_isPFcand.clear();
+    _Muon_sublead_isPFcand.clear();    
+    _Kaon_KEE_pt.clear();
+    _Kaon_KMuMu_pt.clear();
+    _Kaon_KEE_eta.clear();
+    _Kaon_KMuMu_eta.clear();
+    _Kaon_KEE_phi.clear();
+    _Kaon_KMuMu_phi.clear();   
 
     _GenPart_BToKstll_index = -1;
     _GenPart_JPsiFromB_index = -1;
@@ -301,140 +383,216 @@ int main(int argc, char **argv){
     _KPFCand_gen_index = -1;
 
     for( int isEleCh=0; isEleCh<2; isEleCh++ ){//loop over KEE (1) and KMuMu (0)
+        
+      if(isMC != 0 && isEleFinalState == 1)isEleCh=1;
 
-    //Select the BToKll candidate with reco criteria
-    int nBinTree = (isEleCh == 1) ? tree->nBToKEE : tree->nBToKMuMu;
-    float best_B_CL_vtx = -1.;;
-    std::vector<std::pair<int, float>> B_vtxCL_idx_val;
-    _Muon_tag_index_KEE.resize(nBinTree);
-    _Muon_tag_index_KMuMu.resize(nBinTree);
-
-
-    if(debug) std::cout << " >>> nBinTree = " << nBinTree << std::endl;
-    
-    for(int i_Btree=0; i_Btree<nBinTree; ++i_Btree){//loop over triplets            
+      //Select the BToKll candidate with reco criteria
+      int nBinTree = (isEleCh == 1) ? tree->nBToKEE : tree->nBToKMuMu;
+      float best_B_CL_vtx = -1.;;
+      std::vector<std::pair<int, float>> B_vtxCL_idx_val;
       
-      int l1_Index = (isEleCh == 1) ? tree->BToKEE_l1Idx[i_Btree] : tree->BToKMuMu_l1Idx[i_Btree];
-      int l2_Index = (isEleCh == 1) ? tree->BToKEE_l2Idx[i_Btree] : tree->BToKMuMu_l2Idx[i_Btree];
-      int kaon_Index = (isEleCh == 1) ? tree->BToKEE_kIdx[i_Btree] : tree->BToKMuMu_kIdx[i_Btree];
-      
-      //KEE cleaning
-      if( isEleCh == 1 ){
-          if( tree->Electron_isPFoverlap[l1_Index] == 1 || tree->Electron_isPFoverlap[l2_Index] == 1 ) continue;
-          if( tree->ProbeTracks_isMatchedToEle[kaon_Index] == 1 ) continue;
+      if(isEleCh == 1){
+        _Muon_tag_index_KEE.resize(nBinTree);
+        _Electron_lead_pt.resize(nBinTree);
+        _Electron_sublead_pt.resize(nBinTree);
+        _Electron_lead_eta.resize(nBinTree);
+        _Electron_sublead_eta.resize(nBinTree);
+        _Electron_lead_phi.resize(nBinTree);
+        _Electron_sublead_phi.resize(nBinTree);  
+        _Electron_lead_charge.resize(nBinTree);
+        _Electron_sublead_charge.resize(nBinTree);
+        _Electron_lead_isPF.resize(nBinTree);
+        _Electron_sublead_isPF.resize(nBinTree);
+        _Electron_lead_isLowPt.resize(nBinTree);
+        _Electron_sublead_isLowPt.resize(nBinTree);        
+        _Kaon_KEE_pt.resize(nBinTree);
+        _Kaon_KEE_eta.resize(nBinTree);
+        _Kaon_KEE_phi.resize(nBinTree);            
       }
+      else{
+        _Muon_tag_index_KMuMu.resize(nBinTree);
+        _Muon_lead_pt.resize(nBinTree);
+        _Muon_sublead_pt.resize(nBinTree);
+        _Muon_lead_eta.resize(nBinTree);
+        _Muon_sublead_eta.resize(nBinTree);
+        _Muon_lead_phi.resize(nBinTree);
+        _Muon_sublead_phi.resize(nBinTree);
+        _Muon_lead_charge.resize(nBinTree);
+        _Muon_sublead_charge.resize(nBinTree);
+        _Muon_lead_isPFcand.resize(nBinTree);
+        _Muon_sublead_isPFcand.resize(nBinTree);        
+        _Kaon_KMuMu_pt.resize(nBinTree);
+        _Kaon_KMuMu_eta.resize(nBinTree);
+        _Kaon_KMuMu_phi.resize(nBinTree);
+      }
+
+
+      if(debug) std::cout << " isEleCh " << isEleCh << " >>> nBinTree = " << nBinTree << std::endl;
+    
+
+      for(int i_Btree=0; i_Btree<nBinTree; ++i_Btree){//loop over triplets            
       
-      if( isEleCh == 0 ){
-          //probe muon different from trigger muon
+	int l1_Index = (isEleCh == 1) ? tree->BToKEE_l1Idx[i_Btree] : tree->BToKMuMu_l1Idx[i_Btree];
+	int l2_Index = (isEleCh == 1) ? tree->BToKEE_l2Idx[i_Btree] : tree->BToKMuMu_l2Idx[i_Btree];
+	int kaon_Index = (isEleCh == 1) ? tree->BToKEE_kIdx[i_Btree] : tree->BToKMuMu_kIdx[i_Btree];
+    
+	int l1_charge = (isEleCh == 1) ? tree->Electron_charge[l1_Index] : tree->Muon_charge[l1_Index];
+	int l2_charge = (isEleCh == 1) ? tree->Electron_charge[l2_Index] : tree->Muon_charge[l2_Index];
+    
+	
+	if(isEleCh == 1){
+	  _Electron_lead_pt[i_Btree] = tree->Electron_pt[l1_Index];
+	  _Electron_sublead_pt[i_Btree] = tree->Electron_pt[l2_Index];
+	  _Electron_lead_eta[i_Btree] = tree->Electron_eta[l1_Index];
+	  _Electron_sublead_eta[i_Btree] = tree->Electron_eta[l2_Index];
+	  _Electron_lead_phi[i_Btree] = tree->Electron_phi[l1_Index];
+	  _Electron_sublead_phi[i_Btree] = tree->Electron_phi[l2_Index];  
+	  _Electron_lead_charge[i_Btree] = l1_charge;
+	  _Electron_sublead_charge[i_Btree] = l2_charge;
+	  _Electron_lead_isPF[i_Btree] = tree->Electron_isPF[l1_Index];
+	  _Electron_sublead_isPF[i_Btree] = tree->Electron_isPF[l2_Index];
+	  _Electron_lead_isLowPt[i_Btree] = tree->Electron_isLowPt[l1_Index];
+	  _Electron_sublead_isLowPt[i_Btree] = tree->Electron_isLowPt[l2_Index];        
+	  _Kaon_KEE_pt[i_Btree] = tree->ProbeTracks_pt[kaon_Index];
+	  _Kaon_KEE_eta[i_Btree] = tree->ProbeTracks_eta[kaon_Index];
+	  _Kaon_KEE_phi[i_Btree] = tree->ProbeTracks_phi[kaon_Index];       
+	}
+	else{
+	  _Muon_lead_pt[i_Btree] = tree->Muon_pt[l1_Index];
+	  _Muon_sublead_pt[i_Btree] = tree->Muon_pt[l2_Index];
+	  _Muon_lead_eta[i_Btree] = tree->Muon_eta[l1_Index];
+	  _Muon_sublead_eta[i_Btree] = tree->Muon_eta[l2_Index];
+	  _Muon_lead_phi[i_Btree] = tree->Muon_phi[l1_Index];
+	  _Muon_sublead_phi[i_Btree] = tree->Muon_phi[l2_Index];
+	  _Muon_lead_charge[i_Btree] = l1_charge;
+	  _Muon_sublead_charge[i_Btree] = l2_charge;
+	  _Muon_lead_isPFcand[i_Btree] = tree->Muon_isPFcand[l1_Index];
+	  _Muon_sublead_isPFcand[i_Btree] = tree->Muon_isPFcand[l2_Index];
+	  _Kaon_KMuMu_pt[i_Btree] = tree->ProbeTracks_pt[kaon_Index];
+	  _Kaon_KMuMu_eta[i_Btree] = tree->ProbeTracks_eta[kaon_Index];
+	  _Kaon_KMuMu_phi[i_Btree] = tree->ProbeTracks_phi[kaon_Index];        
+	}    
+    
+	//KEE cleaning
+	if( isEleCh == 1 ){
+	  if( tree->Electron_isPFoverlap[l1_Index] == 1 || tree->Electron_isPFoverlap[l2_Index] == 1 ) continue;
+          if( tree->ProbeTracks_isMatchedToEle[kaon_Index] == 1 ) continue;
+	}
+      
+	if( isEleCh == 0 ){
+	  //probe muon different from trigger muon
           if( tree->Muon_isTriggering[l1_Index] == 1 || tree->Muon_isTriggering[l2_Index] == 1 ) continue;
           //KMuMu cleaning
           if( tree->ProbeTracks_isMatchedToMuon[kaon_Index] == 1 ) continue;
-      }      
+	}      
       
-      //require lepton-1 charge * lepton-2 charge < 0
-      int l1_charge = (isEleCh == 1) ? tree->Electron_charge[l1_Index] : tree->Muon_charge[l1_Index];
-      int l2_charge = (isEleCh == 1) ? tree->Electron_charge[l2_Index] : tree->Muon_charge[l2_Index];
-      if(l1_charge * l2_charge > 0.) continue;
+	//require lepton-1 charge * lepton-2 charge < 0
+	if(l1_charge * l2_charge > 0.) continue;
       
-      //consider only triplets with trigger muon
+	//consider only triplets with trigger muon
       
-      if(isEleCh == 1) _Muon_tag_index_KEE[i_Btree] = -1;
-      else _Muon_tag_index_KMuMu[i_Btree] = -1;      
+	if(isEleCh == 1) _Muon_tag_index_KEE[i_Btree] = -1;
+	else _Muon_tag_index_KMuMu[i_Btree] = -1;      
       
-      int nTriggerMuon = tree->nTriggerMuon;
+	int nTriggerMuon = tree->nTriggerMuon;
+
       
-      for(int i_mu=0; i_mu < nTriggerMuon; i_mu++){//loop over trigger muons
+	for(int i_mu=0; i_mu < nTriggerMuon; i_mu++){//loop over trigger muons
           
-        TLorentzVector lep1_tlv;
-        TLorentzVector lep2_tlv;
-        TLorentzVector kaon_tlv;
-        TLorentzVector TriggerMuon_tlv;
+	  TLorentzVector lep1_tlv;
+	  TLorentzVector lep2_tlv;
+	  TLorentzVector kaon_tlv;
+	  TLorentzVector TriggerMuon_tlv;
 	
-        lep1_tlv.SetPtEtaPhiM( (isEleCh == 1) ? tree->Electron_pt[l1_Index] : tree->Muon_pt[l1_Index],
-                               (isEleCh == 1) ? tree->Electron_eta[l1_Index] : tree->Muon_eta[l1_Index],
-                               (isEleCh == 1) ? tree->Electron_phi[l1_Index] : tree->Muon_phi[l1_Index],
-                               (isEleCh == 1) ? ElectronMass_ : MuonMass_);
-        lep2_tlv.SetPtEtaPhiM( (isEleCh == 1) ? tree->Electron_pt[l2_Index] : tree->Muon_pt[l2_Index],
-                               (isEleCh == 1) ? tree->Electron_eta[l2_Index] : tree->Muon_eta[l2_Index],
-                               (isEleCh == 1) ? tree->Electron_phi[l2_Index] : tree->Muon_phi[l2_Index],
-                               (isEleCh == 1) ? ElectronMass_ : MuonMass_);
-        kaon_tlv.SetPtEtaPhiM(tree->ProbeTracks_pt[kaon_Index],
-                              tree->ProbeTracks_eta[kaon_Index],
-                              tree->ProbeTracks_phi[kaon_Index],
-                              tree->ProbeTracks_mass[kaon_Index]);        
-        TriggerMuon_tlv.SetPtEtaPhiM(tree->TriggerMuon_pt[i_mu],
-                               tree->TriggerMuon_eta[i_mu],
-			                   tree->TriggerMuon_phi[i_mu],
-                               MuonMass_);
+	  lep1_tlv.SetPtEtaPhiM( (isEleCh == 1) ? _Electron_lead_pt[i_Btree] : _Muon_lead_pt[i_Btree],
+				 (isEleCh == 1) ? _Electron_lead_eta[i_Btree] : _Muon_lead_eta[i_Btree],
+				 (isEleCh == 1) ? _Electron_lead_phi[i_Btree] : _Muon_lead_phi[i_Btree],
+				 (isEleCh == 1) ? ElectronMass_ : MuonMass_);
+	  lep2_tlv.SetPtEtaPhiM( (isEleCh == 1) ? _Electron_sublead_pt[i_Btree] : _Muon_sublead_pt[i_Btree],
+				 (isEleCh == 1) ? _Electron_sublead_eta[i_Btree] : _Muon_sublead_eta[i_Btree],
+				 (isEleCh == 1) ? _Electron_sublead_phi[i_Btree] : _Muon_sublead_phi[i_Btree],
+				 (isEleCh == 1) ? ElectronMass_ : MuonMass_);
+	  kaon_tlv.SetPtEtaPhiM( (isEleCh == 1) ? _Kaon_KEE_pt[i_Btree] : _Kaon_KMuMu_pt[i_Btree],
+				 (isEleCh == 1) ? _Kaon_KEE_eta[i_Btree] : _Kaon_KMuMu_eta[i_Btree],
+				 (isEleCh == 1) ? _Kaon_KEE_phi[i_Btree] : _Kaon_KMuMu_phi[i_Btree],
+				KaonMass_);        
+	  TriggerMuon_tlv.SetPtEtaPhiM( tree->TriggerMuon_pt[i_mu],
+				       tree->TriggerMuon_eta[i_mu],
+				       tree->TriggerMuon_phi[i_mu],
+				       MuonMass_);
 	
-        float dR_lep1FromTrMu = lep1_tlv.DeltaR(TriggerMuon_tlv);
-        float dR_lep2FromTrMu = lep2_tlv.DeltaR(TriggerMuon_tlv);   
-        float dR_kaonFromTrMu = kaon_tlv.DeltaR(TriggerMuon_tlv);
+	  float dR_lep1FromTrMu = lep1_tlv.DeltaR(TriggerMuon_tlv);
+	  float dR_lep2FromTrMu = lep2_tlv.DeltaR(TriggerMuon_tlv);   
+	  float dR_kaonFromTrMu = kaon_tlv.DeltaR(TriggerMuon_tlv);
         
-        float l1_vz = (isEleCh == 1) ? tree->Electron_vz[l1_Index] : tree->Muon_vz[l1_Index];
-        float l2_vz = (isEleCh == 1) ? tree->Electron_vz[l2_Index] : tree->Muon_vz[l2_Index];
+	  float l1_vz = (isEleCh == 1) ? tree->Electron_vz[l1_Index] : tree->Muon_vz[l1_Index];
+	  float l2_vz = (isEleCh == 1) ? tree->Electron_vz[l2_Index] : tree->Muon_vz[l2_Index];
 
-        //On each triplet object require dR>0.4 and vz<1
-        if( dR_lep1FromTrMu < 0.4 || dR_lep2FromTrMu < 0.4 || dR_kaonFromTrMu < 0.4 || 
-            std::abs(tree->TriggerMuon_vz[i_mu] - l1_vz) > 1. || 
-            std::abs(tree->TriggerMuon_vz[i_mu] - l2_vz) > 1. || 
-            std::abs(tree->TriggerMuon_vz[i_mu] - tree->ProbeTracks_vz[kaon_Index]) > 1. ) continue;        
+	  //On each triplet object require dR>0.4 and vz<1
+	  if( dR_lep1FromTrMu < 0.03 || dR_lep2FromTrMu < 0.03 || dR_kaonFromTrMu < 0.03 || 
+	      std::abs(tree->TriggerMuon_vz[i_mu] - l1_vz) > 1. || 
+	      std::abs(tree->TriggerMuon_vz[i_mu] - l2_vz) > 1. || 
+	      std::abs(tree->TriggerMuon_vz[i_mu] - tree->ProbeTracks_vz[kaon_Index]) > 1. ) continue;        
 
-        if(isEleCh == 1) _Muon_tag_index_KEE[i_Btree] = i_mu;
-        else _Muon_tag_index_KMuMu[i_Btree] = i_mu;
-
-        break;        
-      }//loop over trigger muons
+	  if(isEleCh == 1) _Muon_tag_index_KEE[i_Btree] = i_mu;
+	  else _Muon_tag_index_KMuMu[i_Btree] = i_mu;
+	  
+	  break;        
+	}//loop over trigger muons
     
     
-      //force rank only among triplets with extra trigger muon
-      float B_CL_vtx = ( (isEleCh == 1) ? tree->BToKEE_svprob[i_Btree] : tree->BToKMuMu_svprob[i_Btree] ) +
-                ( (isEleCh == 1) ? ((_Muon_tag_index_KEE[i_Btree] == -1) ? -1 : 0) 
-                    : ((_Muon_tag_index_KMuMu[i_Btree] == -1) ? -1 : 0) );
+	//force rank only among triplets with extra trigger muon
+	float B_CL_vtx = ( (isEleCh == 1) ? tree->BToKEE_svprob[i_Btree] : tree->BToKMuMu_svprob[i_Btree] ) +
+	  ( (isEleCh == 1) ? ((_Muon_tag_index_KEE[i_Btree] == -1) ? -1 : 0) 
+	    : ((_Muon_tag_index_KMuMu[i_Btree] == -1) ? -1 : 0) );
       
-      B_vtxCL_idx_val.push_back(std::pair<int, float>(i_Btree, B_CL_vtx));
+	B_vtxCL_idx_val.push_back(std::pair<int, float>(i_Btree, B_CL_vtx));
       
-      if( best_B_CL_vtx < 0. || B_CL_vtx>best_B_CL_vtx ){
-	best_B_CL_vtx = B_CL_vtx;
-    if(isEleCh == 1) _BToKstll_sel_index_KEE = i_Btree;
-    else _BToKstll_sel_index_KMuMu = i_Btree;
+	if( best_B_CL_vtx < 0. || B_CL_vtx>best_B_CL_vtx ){
+	  best_B_CL_vtx = B_CL_vtx;
+	  if(isEleCh == 1) _BToKstll_sel_index_KEE = i_Btree;
+	  else _BToKstll_sel_index_KMuMu = i_Btree;
+	}
+      
+      }//loop over triplets
+
+
+
+      std::sort(B_vtxCL_idx_val.begin(), B_vtxCL_idx_val.end(), comparePairs);
+      int ipCount = 0;
+      if(isEleCh == 1) _BToKstll_order_index_KEE.resize(B_vtxCL_idx_val.size());
+      else _BToKstll_order_index_KMuMu.resize(B_vtxCL_idx_val.size());
+      for(auto ip : B_vtxCL_idx_val){
+	if(isEleCh == 1) _BToKstll_order_index_KEE[ipCount] = ip.first;
+	else _BToKstll_order_index_KMuMu[ipCount] = ip.first;
+	++ipCount;
       }
+    
+      B_vtxCL_idx_val.clear();
+    
+      int BToKstll_sel_index = (isEleCh == 1) ? _BToKstll_sel_index_KEE : _BToKstll_sel_index_KMuMu;
+
+      if(debug) std::cout << " isEleCh " << isEleCh << " BToKstll_sel_index = " << BToKstll_sel_index << std::endl;
+
+      if(isMC == 0 && BToKstll_sel_index<0) continue;
+
+      //assign Muon_sel_index for triplet with the best CL(B-vtx)
+      if(BToKstll_sel_index>=0){
+	if(isEleCh == 1) _Muon_sel_index_KEE = _Muon_tag_index_KEE[BToKstll_sel_index];
+	else _Muon_sel_index_KMuMu = _Muon_tag_index_KMuMu[BToKstll_sel_index];
+      }
+      if(debug) std::cout << " isEleCh " << isEleCh << " iEntry = " << iEntry << " _Muon_sel_index = " << 
+		  ((isEleCh == 1) ? _Muon_sel_index_KEE : _Muon_sel_index_KMuMu) << std::endl;
+
+      //!!! Can have selected B->Kstll even without additional tag muons
+      //Needs to ask both BToKstll_sel_index>=0 && Muon_sel_index>=0 for analysis on probe side
       
-    }//loop over triplets
-
-    std::sort(B_vtxCL_idx_val.begin(), B_vtxCL_idx_val.end(), comparePairs);
-    int ipCount = 0;
-    if(isEleCh == 1) _BToKstll_order_index_KEE.resize(B_vtxCL_idx_val.size());
-    else _BToKstll_order_index_KMuMu.resize(B_vtxCL_idx_val.size());
-    for(auto ip : B_vtxCL_idx_val){
-      if(isEleCh == 1) _BToKstll_order_index_KEE[ipCount] = ip.first;
-      else _BToKstll_order_index_KMuMu[ipCount] = ip.first;
-      ++ipCount;
-    }
-    
-    B_vtxCL_idx_val.clear();
-    
-    int BToKstll_sel_index = (isEleCh == 1) ? _BToKstll_sel_index_KEE : _BToKstll_sel_index_KMuMu;
-
-    if(debug) std::cout << " isEleCh " << isEleCh << " BToKstll_sel_index = " << BToKstll_sel_index << std::endl;
-
-    if(isMC == 0 && BToKstll_sel_index<0) continue;
-
-    //assign Muon_sel_index for triplet with the best CL(B-vtx)
-    if(BToKstll_sel_index>=0){
-      if(isEleCh == 1) _Muon_sel_index_KEE = _Muon_tag_index_KEE[BToKstll_sel_index];
-      else _Muon_sel_index_KMuMu = _Muon_tag_index_KMuMu[BToKstll_sel_index];
-    }
-    if(debug) std::cout << " isEleCh " << isEleCh << " iEntry = " << iEntry << " _Muon_sel_index = " << 
-        ((isEleCh == 1) ? _Muon_sel_index_KEE : _Muon_sel_index_KMuMu) << std::endl;
-
-
-    //!!! Can have selected B->Kstll even without additional tag muons
-    //Needs to ask both BToKstll_sel_index>=0 && Muon_sel_index>=0 for analysis on probe side
+      if(isMC != 0 && isEleFinalState == 0)break;
     
     }//loop over KEE (1) and KMuMu (0)
     
     
+
 
     //Select the BToKstll candidate based on gen matching
 
@@ -442,7 +600,7 @@ int main(int argc, char **argv){
       int nGenPart = tree->nGenPart;
 
       int leptonID = (isEleFinalState == 1) ? 11 : 13;
-
+      
       if(isResonant){
 	for(int i_Bu=0; i_Bu<nGenPart; i_Bu++){
 
@@ -560,29 +718,29 @@ int main(int argc, char **argv){
 
 	_BToKstll_gen_llMass = (gen_lep1FromB_tlv+gen_lep2FromB_tlv).Mag();
 	_BToKstll_gen_mass = (gen_lep1FromB_tlv+gen_lep2FromB_tlv+gen_KFromB_tlv).Mag();
-
+	
 	float best_dR = -1.;
     
-    int nBinTree = isEleFinalState ? tree->nBToKEE : tree->nBToKMuMu;
+	int nBinTree = (isEleFinalState == 1) ? tree->nBToKEE : tree->nBToKMuMu;
 	
 	for(int i_Btree=0; i_Btree<nBinTree; ++i_Btree){
-
+                                                                                                                                    
 	  TLorentzVector kaon_tlv;
 	  TLorentzVector lep1_tlv;
-	  TLorentzVector lep2_tlv;
-
-	  kaon_tlv.SetPtEtaPhiM(tree->BToKstll_kaon_pt[i_Btree],
-				tree->BToKstll_kaon_eta[i_Btree],
-				tree->BToKstll_kaon_phi[i_Btree],
-				KaonMass_);
-	  lep1_tlv.SetPtEtaPhiM(tree->BToKstll_lep1_pt[i_Btree],
-				tree->BToKstll_lep1_eta[i_Btree],
-				tree->BToKstll_lep1_phi[i_Btree],
-				(isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
-	  lep2_tlv.SetPtEtaPhiM(tree->BToKstll_lep2_pt[i_Btree],
-				tree->BToKstll_lep2_eta[i_Btree],
-				tree->BToKstll_lep2_phi[i_Btree],
-				(isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
+	  TLorentzVector lep2_tlv;      
+                                                                                                                                       
+          lep1_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Electron_lead_pt[i_Btree] : _Muon_lead_pt[i_Btree],
+				 (isEleFinalState == 1) ? _Electron_lead_eta[i_Btree] : _Muon_lead_eta[i_Btree],
+				 (isEleFinalState == 1) ? _Electron_lead_phi[i_Btree] : _Muon_lead_phi[i_Btree],
+				 (isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
+	  lep2_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Electron_sublead_pt[i_Btree] : _Muon_sublead_pt[i_Btree],
+				 (isEleFinalState == 1) ? _Electron_sublead_eta[i_Btree] : _Muon_sublead_eta[i_Btree],
+				 (isEleFinalState == 1) ? _Electron_sublead_phi[i_Btree] : _Muon_sublead_phi[i_Btree],
+				 (isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
+	  kaon_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Kaon_KEE_pt[i_Btree] : _Kaon_KMuMu_pt[i_Btree],
+				 (isEleFinalState == 1) ? _Kaon_KEE_eta[i_Btree] : _Kaon_KMuMu_eta[i_Btree],
+				 (isEleFinalState == 1) ? _Kaon_KEE_phi[i_Btree] : _Kaon_KMuMu_phi[i_Btree],
+				 KaonMass_);
 	  
 	  float dR_KFromB = kaon_tlv.DeltaR(gen_KFromB_tlv);
 	  float dR_lep1FromB = min(lep1_tlv.DeltaR(gen_lep1FromB_tlv), lep2_tlv.DeltaR(gen_lep1FromB_tlv));
