@@ -1,27 +1,3 @@
-<bin name="testEvaluateModel" file="testEvaluateModel.cc">
-    <use name="tensorflow-cc" />
-</bin>
-
 <bin name="BToKstllNtupleProducer_BParkingNANO" file="BToKstllNtupleProducer_BParkingNANO.cc">
-    <use name="root" />
-</bin>
-
-<bin name="BToKstllNtupleProducer" file="BToKstllNtupleProducer.cc">
-    <use name="root" />
-</bin>
-
-<bin name="BToKstllNtupleProducerTrgMuon" file="BToKstllNtupleProducerTrgMuon.cc">
-    <use name="root" />
-</bin>
-
-<bin name="BToKmumuNtupleProducer" file="BToKmumuNtupleProducer.cc">
-    <use name="root" />
-</bin>
-
-<bin name="BToKeeNtupleProducer" file="BToKeeNtupleProducer.cc">
-    <use name="root" />
-</bin>
-
-<bin name="BToKpipiNtupleProducer" file="BToKpipiNtupleProducer.cc">
     <use name="root" />
 </bin>
