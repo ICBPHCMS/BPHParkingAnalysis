@@ -61,6 +61,7 @@ public :
    float ProbeTracks_vz[kProbeTracksMax];
    int ProbeTracks_isMatchedToEle[kProbeTracksMax];
    int ProbeTracks_isMatchedToMuon[kProbeTracksMax];
+   int ProbeTracks_genPartIdx[kProbeTracksMax];
    
    uint nTriggerMuon;   
    float TriggerMuon_pt[kTriggerMuonMax];
@@ -80,6 +81,7 @@ public :
    int Electron_isPFoverlap[kElectronMax];
    int Electron_isPF[kElectronMax];
    int Electron_isLowPt[kElectronMax];
+   int Electron_genPartIdx[kElectronMax];
    
    uint nMuon;
    int Muon_charge[kMuonMax];
@@ -94,6 +96,7 @@ public :
    float Muon_pfRelIso04_all[kMuonMax];
    bool Muon_softId[kMuonMax];
    bool Muon_mediumId[kMuonMax];
+   int Muon_genPartIdx[kElectronMax];
    
    uint nGenPart;
    int GenPart_pdgId[kGenPartMax];
@@ -101,7 +104,7 @@ public :
    float GenPart_pt[kGenPartMax];
    float GenPart_eta[kGenPartMax];
    float GenPart_phi[kGenPartMax];
-
+   
    uint nTrigObj;
    int TrigObj_id[kTrigObjMax];
    float TrigObj_pt[kTrigObjMax];
@@ -157,6 +160,7 @@ void NanoAODTree::Init(TChain* tree)
   _tree->SetBranchAddress("Muon_pfRelIso04_all",&Muon_pfRelIso04_all);
   _tree->SetBranchAddress("Muon_softId",&Muon_softId);
   _tree->SetBranchAddress("Muon_mediumId",&Muon_mediumId);
+  _tree->SetBranchAddress("Muon_genPartIdx",&Muon_genPartIdx);
 
   _tree->SetBranchAddress("nElectron",&nElectron);  
   _tree->SetBranchAddress("Electron_charge",&Electron_charge);  
@@ -169,6 +173,7 @@ void NanoAODTree::Init(TChain* tree)
   _tree->SetBranchAddress("Electron_isPFoverlap",&Electron_isPFoverlap);
   _tree->SetBranchAddress("Electron_isPF",&Electron_isPF);
   _tree->SetBranchAddress("Electron_isLowPt",&Electron_isLowPt);
+  _tree->SetBranchAddress("Electron_genPartIdx",&Electron_genPartIdx);
 
   
   int BToKEE_info = _tree->SetBranchAddress("nBToKEE",&nBToKEE);
@@ -200,6 +205,7 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("ProbeTracks_vz",&ProbeTracks_vz);
     _tree->SetBranchAddress("ProbeTracks_isMatchedToEle",&ProbeTracks_isMatchedToEle);
     _tree->SetBranchAddress("ProbeTracks_isMatchedToMuon",&ProbeTracks_isMatchedToMuon);
+    _tree->SetBranchAddress("ProbeTracks_genPartIdx",&ProbeTracks_genPartIdx);
   }  
 
   
