@@ -42,7 +42,7 @@ int main(int argc, char **argv){
     return -1;
   }
   int isMC = -1;
-  int isResonant = -1;
+  //int isResonant = -1;
   int isEleFinalState = -1;
   int isKstFinalState = -1;
   string output = "";
@@ -64,7 +64,7 @@ int main(int argc, char **argv){
   }for (int i = 1; i < argc; ++i) {
     if(std::string(argv[i]) == "--isResonant") {
       if (i + 1 < argc) {
-	isResonant = atoi(argv[i+1]);
+	//isResonant = atoi(argv[i+1]);
 	break;
       } else {
 	std::cerr << " --isResonant option requires one argument " << std::endl;
@@ -282,11 +282,6 @@ int main(int argc, char **argv){
   float _BToKstll_gen_mass = -1;
   float _BToKstll_gen_muonTag_hpT = -1;
 
-  //the 3 following are the index of the reco closest to the gen (dR < 0.1)
-  //only for no LT
-  int _Lep1_gen_index = -1;
-  int _Lep2_gen_index = -1;
-  int _KPFCand_gen_index = -1;  
 
   if(isMC != 0){
     tree_new->Branch("GenPart_BToKstll_index",&_GenPart_BToKstll_index,"GenPart_BToKstll_index/I");
@@ -301,9 +296,6 @@ int main(int argc, char **argv){
     tree_new->Branch("BToKstll_gen_llMass",&_BToKstll_gen_llMass,"BToKstll_gen_llMass/F");
     tree_new->Branch("BToKstll_gen_mass",&_BToKstll_gen_mass,"BToKstll_gen_mass/F");
     tree_new->Branch("BToKstll_gen_muonTag_hpT",&_BToKstll_gen_muonTag_hpT,"BToKstll_gen_muonTag_hpT/F");
-    tree_new->Branch("Lep1_gen_index",&_Lep1_gen_index,"Lep1_gen_index/I");
-    tree_new->Branch("Lep2_gen_index",&_Lep2_gen_index,"Lep2_gen_index/I");
-    tree_new->Branch("KPFCand_gen_index",&_KPFCand_gen_index,"KPFCand_gen_index/I");
   }
 
 
@@ -378,16 +370,14 @@ int main(int argc, char **argv){
     _BToKstll_gen_llMass = -1;
     _BToKstll_gen_mass = -1;
     _BToKstll_gen_muonTag_hpT = -1;
-    _Lep1_gen_index = -1;
-    _Lep2_gen_index = -1;
-    _KPFCand_gen_index = -1;
+    
+    int nBinTree = (isEleFinalState == 1) ? tree->nBToKEE : tree->nBToKMuMu;
 
     for( int isEleCh=0; isEleCh<2; isEleCh++ ){//loop over KEE (1) and KMuMu (0)
         
       if(isMC != 0 && isEleFinalState == 1)isEleCh=1;
 
       //Select the BToKll candidate with reco criteria
-      int nBinTree = (isEleCh == 1) ? tree->nBToKEE : tree->nBToKMuMu;
       float best_B_CL_vtx = -1.;;
       std::vector<std::pair<int, float>> B_vtxCL_idx_val;
       
@@ -479,12 +469,8 @@ int main(int argc, char **argv){
           if( tree->ProbeTracks_isMatchedToEle[kaon_Index] == 1 ) continue;
 	}
       
-	if( isEleCh == 0 ){
-	  //probe muon different from trigger muon
-          if( tree->Muon_isTriggering[l1_Index] == 1 || tree->Muon_isTriggering[l2_Index] == 1 ) continue;
-          //KMuMu cleaning
-          if( tree->ProbeTracks_isMatchedToMuon[kaon_Index] == 1 ) continue;
-	}      
+	//KMuMu cleaning  
+	if( isEleCh == 0 && tree->ProbeTracks_isMatchedToMuon[kaon_Index] == 1 ) continue;     
       
 	//require lepton-1 charge * lepton-2 charge < 0
 	if(l1_charge * l2_charge > 0.) continue;
@@ -593,214 +579,86 @@ int main(int argc, char **argv){
     
     
 
-
-    //Select the BToKstll candidate based on gen matching
-
-    if(isMC != 0){
-      int nGenPart = tree->nGenPart;
-
-      int leptonID = (isEleFinalState == 1) ? 11 : 13;
-      
-      if(isResonant){
-	for(int i_Bu=0; i_Bu<nGenPart; i_Bu++){
-
-	  _GenPart_JPsiFromB_index = -1;
-	  _GenPart_lep1FromB_index = -1;
-	  _GenPart_lep2FromB_index = -1;
-	  _GenPart_KFromB_index = -1;
-
-	  if(abs(tree->GenPart_pdgId[i_Bu])==521){
-	    for(int i_gen=0; i_gen<nGenPart; i_gen++){
-
-	      int pdgId = tree->GenPart_pdgId[i_gen];
-	      int mother_index = tree->GenPart_genPartIdxMother[i_gen];
-
-	      int lep1_index = -1;
-	      int lep2_index = -1;
-
-	      if(abs(pdgId)==443 && mother_index == i_Bu){
-
-		for(int j_gen=0; j_gen<nGenPart; j_gen++){
-		  int pdgId = tree->GenPart_pdgId[j_gen];
-		  float partPt = tree->GenPart_pt[i_gen];
-		  float partEta = tree->GenPart_eta[i_gen];
-		  if(partPt < minPtacceptance_) continue;
-		  if(std::abs(partEta) > maxEtacceptance_) continue;
-		  int mother_index = tree->GenPart_genPartIdxMother[j_gen];
-		  if(abs(pdgId)==leptonID && mother_index == i_gen && lep1_index < 0)
-		    lep1_index = j_gen;
-		  else if(abs(pdgId)==leptonID && mother_index == i_gen)
-		    lep2_index = j_gen;
-		  if(lep1_index >= 0 && lep2_index >= 0) break;
-		}
-
-		if(lep1_index >= 0 && lep2_index >= 0){
-		  _GenPart_JPsiFromB_index = i_gen;
-		  _GenPart_lep1FromB_index = lep1_index;
-		  _GenPart_lep2FromB_index = lep2_index;
-		}
-		else break;
-
-	      }
-
-	      else if(abs(pdgId)==321 && mother_index == i_Bu) _GenPart_KFromB_index = i_gen;
-
-	      else if(mother_index == i_Bu) break; //Additional B decay products
-	    }
-	  }
-
-	  if(_GenPart_JPsiFromB_index >= 0 && _GenPart_KFromB_index >=0){
-	    _GenPart_BToKstll_index = i_Bu;
-	    break;
-	  }
-	}	
-      }//resonant
-      else{ 
-
-	for(int i_Bu=0; i_Bu<nGenPart; i_Bu++){
-	  _GenPart_JPsiFromB_index = -1;
-	  _GenPart_lep1FromB_index = -1;
-	  _GenPart_lep2FromB_index = -1;
-	  _GenPart_KFromB_index = -1;
-
-	  if(abs(tree->GenPart_pdgId[i_Bu]) == 521){
-
-	    for(int i_gen=0; i_gen<nGenPart; i_gen++){
-
-	      int pdgId = tree->GenPart_pdgId[i_gen];
-	      float partPt = tree->GenPart_pt[i_gen];
-	      float partEta = tree->GenPart_eta[i_gen];
-	      if(partPt < minPtacceptance_) continue;
-	      if(std::abs(partEta) > maxEtacceptance_) continue;
-	      int mother_index = tree->GenPart_genPartIdxMother[i_gen];
-	      if(abs(pdgId) == leptonID && mother_index == i_Bu && _GenPart_lep1FromB_index < 0)
-		_GenPart_lep1FromB_index = i_gen;
-	      else if(abs(pdgId)==leptonID && mother_index == i_Bu)
-		_GenPart_lep2FromB_index = i_gen;
-	      else if(abs(pdgId)==321 && mother_index == i_Bu)
-		_GenPart_KFromB_index = i_gen;
-	      else if(mother_index == i_Bu) break;
-	    }
-	  }//if B
-
-	  if(_GenPart_lep1FromB_index >= 0 && _GenPart_lep2FromB_index >= 0 && _GenPart_KFromB_index >= 0){
-	    _GenPart_BToKstll_index = i_Bu;
-	    break;
-	  }
-	} //loop over B
-      }// non resonant
     
-      if(_GenPart_BToKstll_index >= 0){
-
-	//lep1FromB stored a leading daughter
-	if(tree->GenPart_pt[_GenPart_lep2FromB_index] > tree->GenPart_pt[_GenPart_lep1FromB_index]){
-	  int i_temp = _GenPart_lep1FromB_index;
-	  _GenPart_lep1FromB_index = _GenPart_lep2FromB_index;
-	  _GenPart_lep2FromB_index = i_temp;
-	}
-
-	TLorentzVector gen_KFromB_tlv;
+    if(isMC != 0){              
+        
+      for(int i_Btree=0; i_Btree<nBinTree; ++i_Btree){           
+      
+	int l1_Index = (isEleFinalState == 1) ? tree->BToKEE_l1Idx[i_Btree] : tree->BToKMuMu_l1Idx[i_Btree];
+	int l2_Index = (isEleFinalState == 1) ? tree->BToKEE_l2Idx[i_Btree] : tree->BToKMuMu_l2Idx[i_Btree];
+	int kaon_Index = (isEleFinalState == 1) ? tree->BToKEE_kIdx[i_Btree] : tree->BToKMuMu_kIdx[i_Btree];
+        
+	_GenPart_lep1FromB_index = (isEleFinalState == 1) ? tree->Electron_genPartIdx[l1_Index] : tree->Muon_genPartIdx[l1_Index];
+	_GenPart_lep2FromB_index = (isEleFinalState == 1) ? tree->Electron_genPartIdx[l2_Index] : tree->Muon_genPartIdx[l2_Index];
+	_GenPart_KFromB_index = tree->ProbeTracks_genPartIdx[kaon_Index];
+            
+	if(_GenPart_lep1FromB_index < 0 || _GenPart_lep2FromB_index < 0 || _GenPart_KFromB_index < 0 ) continue;
+            
+	if( tree->GenPart_pt[_GenPart_lep1FromB_index] < minPtacceptance_ || tree->GenPart_eta[_GenPart_lep1FromB_index] > maxEtacceptance_ ||
+	    tree->GenPart_pt[_GenPart_lep2FromB_index] < minPtacceptance_ || tree->GenPart_eta[_GenPart_lep2FromB_index] > maxEtacceptance_ ||
+	    tree->GenPart_pt[_GenPart_KFromB_index] < minPtacceptance_ || tree->GenPart_eta[_GenPart_KFromB_index] > maxEtacceptance_) continue;
+        
+	_GenPart_BToKstll_index = i_Btree;
+        
 	TLorentzVector gen_lep1FromB_tlv;
 	TLorentzVector gen_lep2FromB_tlv;
-	
-	gen_KFromB_tlv.SetPtEtaPhiM(tree->GenPart_pt[_GenPart_KFromB_index],
-				    tree->GenPart_eta[_GenPart_KFromB_index],
-				    tree->GenPart_phi[_GenPart_KFromB_index],
-				    KaonMass_);
+	TLorentzVector gen_KFromB_tlv;
+            
 	gen_lep1FromB_tlv.SetPtEtaPhiM(tree->GenPart_pt[_GenPart_lep1FromB_index],
-				      tree->GenPart_eta[_GenPart_lep1FromB_index],
-				      tree->GenPart_phi[_GenPart_lep1FromB_index],
+				       tree->GenPart_eta[_GenPart_lep1FromB_index],
+				       tree->GenPart_phi[_GenPart_lep1FromB_index],
 				       (isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
 	gen_lep2FromB_tlv.SetPtEtaPhiM(tree->GenPart_pt[_GenPart_lep2FromB_index],
 				       tree->GenPart_eta[_GenPart_lep2FromB_index],
 				       tree->GenPart_phi[_GenPart_lep2FromB_index],
 				       (isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
-
+	gen_KFromB_tlv.SetPtEtaPhiM(tree->GenPart_pt[_GenPart_KFromB_index],
+				    tree->GenPart_eta[_GenPart_KFromB_index],
+				    tree->GenPart_phi[_GenPart_KFromB_index],
+				    KaonMass_);
+            
 	_BToKstll_gen_llMass = (gen_lep1FromB_tlv+gen_lep2FromB_tlv).Mag();
 	_BToKstll_gen_mass = (gen_lep1FromB_tlv+gen_lep2FromB_tlv+gen_KFromB_tlv).Mag();
-	
-	float best_dR = -1.;
+                
+	TLorentzVector lep1_tlv;
+	TLorentzVector lep2_tlv;
+	TLorentzVector kaon_tlv;                
     
-	int nBinTree = (isEleFinalState == 1) ? tree->nBToKEE : tree->nBToKMuMu;
-	
-	for(int i_Btree=0; i_Btree<nBinTree; ++i_Btree){
-                                                                                                                                    
-	  TLorentzVector kaon_tlv;
-	  TLorentzVector lep1_tlv;
-	  TLorentzVector lep2_tlv;      
-                                                                                                                                       
-          lep1_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Electron_lead_pt[i_Btree] : _Muon_lead_pt[i_Btree],
-				 (isEleFinalState == 1) ? _Electron_lead_eta[i_Btree] : _Muon_lead_eta[i_Btree],
-				 (isEleFinalState == 1) ? _Electron_lead_phi[i_Btree] : _Muon_lead_phi[i_Btree],
+	for(int iBtree_dR=0; iBtree_dR<nBinTree; ++iBtree_dR){
+                
+	  lep1_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Electron_lead_pt[iBtree_dR] : _Muon_lead_pt[iBtree_dR],
+				 (isEleFinalState == 1) ? _Electron_lead_eta[iBtree_dR] : _Muon_lead_eta[iBtree_dR],
+				 (isEleFinalState == 1) ? _Electron_lead_phi[iBtree_dR] : _Muon_lead_phi[iBtree_dR],
 				 (isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
-	  lep2_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Electron_sublead_pt[i_Btree] : _Muon_sublead_pt[i_Btree],
-				 (isEleFinalState == 1) ? _Electron_sublead_eta[i_Btree] : _Muon_sublead_eta[i_Btree],
-				 (isEleFinalState == 1) ? _Electron_sublead_phi[i_Btree] : _Muon_sublead_phi[i_Btree],
+	  lep2_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Electron_sublead_pt[iBtree_dR] : _Muon_sublead_pt[iBtree_dR],
+				 (isEleFinalState == 1) ? _Electron_sublead_eta[iBtree_dR] : _Muon_sublead_eta[iBtree_dR],
+				 (isEleFinalState == 1) ? _Electron_sublead_phi[iBtree_dR] : _Muon_sublead_phi[iBtree_dR],
 				 (isEleFinalState == 1) ? ElectronMass_ : MuonMass_);
-	  kaon_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Kaon_KEE_pt[i_Btree] : _Kaon_KMuMu_pt[i_Btree],
-				 (isEleFinalState == 1) ? _Kaon_KEE_eta[i_Btree] : _Kaon_KMuMu_eta[i_Btree],
-				 (isEleFinalState == 1) ? _Kaon_KEE_phi[i_Btree] : _Kaon_KMuMu_phi[i_Btree],
-				 KaonMass_);
-	  
+	  kaon_tlv.SetPtEtaPhiM( (isEleFinalState == 1) ? _Kaon_KEE_pt[iBtree_dR] : _Kaon_KMuMu_pt[iBtree_dR],
+				 (isEleFinalState == 1) ? _Kaon_KEE_eta[iBtree_dR] : _Kaon_KMuMu_eta[iBtree_dR],
+				 (isEleFinalState == 1) ? _Kaon_KEE_phi[iBtree_dR] : _Kaon_KMuMu_phi[iBtree_dR],
+				 KaonMass_);                
+         
+	  float best_dR = -1.;
+            
 	  float dR_KFromB = kaon_tlv.DeltaR(gen_KFromB_tlv);
 	  float dR_lep1FromB = min(lep1_tlv.DeltaR(gen_lep1FromB_tlv), lep2_tlv.DeltaR(gen_lep1FromB_tlv));
 	  float dR_lep2FromB = min(lep1_tlv.DeltaR(gen_lep2FromB_tlv), lep2_tlv.DeltaR(gen_lep2FromB_tlv));
-	  //Should check that same objects not selected twice
-
-	  float dR_tot = dR_KFromB + dR_lep1FromB + dR_lep2FromB; //In case several BToKmumu matches, take the closest one in dR_tot
-
-	  //if( dR_lep1FromB <0.1 && dR_lep2FromB <0.1
-	  //  && 
+            
+	  float dR_tot = dR_KFromB + dR_lep1FromB + dR_lep2FromB; //In case several matches, take the closest one in dR_tot
+            
 	  if((best_dR <0. || dR_tot < best_dR) && dR_tot < 0.1){
 	    best_dR = dR_tot;
-	    _BToKstll_gen_index = i_Btree;
+	    _BToKstll_gen_index = iBtree_dR;
 	    _BToKstll_gendR_lep1FromB = dR_lep1FromB;
 	    _BToKstll_gendR_lep2FromB = dR_lep2FromB;
 	    _BToKstll_gendR_KFromB = dR_KFromB;
-	  }
+	  }  
+	
 	}
-
-	/*
-	float best_dR_lep1FromB = -1.;
-	float best_dR_lep2FromB = -1.;
-	float best_dR_KFromB = -1.;
-	*/
-
-	//for the moment just check best reco closest to gen
-	//for lepton-lepton combination only
-	/*
-	if(!isLeptonTrack){  
-	for(int i_mu=0; i_mu<nMuon; i_mu++){
-	  TLorentzVector mu_tlv;
-	  mu_tlv.SetPtEtaPhiM(tree->Muon_pt[i_mu],
-			      tree->Muon_eta[i_mu],
-			      tree->Muon_phi[i_mu],
-			      MuonMass_);
-	  float dR_mu1FromB = mu_tlv.DeltaR(gen_mu1FromB_tlv);
-	  float dR_mu2FromB = mu_tlv.DeltaR(gen_mu2FromB_tlv);
-	  if(dR_mu1FromB<0.1 && (best_dR_mu1FromB<0. || dR_mu1FromB<best_dR_mu1FromB)){
-	    _Muon_mu1FromB_index = i_mu;
-	    best_dR_mu1FromB = dR_mu1FromB;
-	  }
-	  if(dR_mu2FromB<0.1 && (best_dR_mu2FromB<0. || dR_mu2FromB<best_dR_mu2FromB)){
-	    _Muon_mu2FromB_index = i_mu;
-	    best_dR_mu2FromB = dR_mu2FromB;
-	  }
-	}
-	}//end of lepton-lepton comb
-	int nPFCand = tree->nPFCand;
-	for(int i_pf=0;i_pf<nPFCand;i_pf++){
-	  if(abs(tree->PFCand_pdgId[i_pf])!=211) continue;
-	  TLorentzVector PFCand_tlv;
-	  PFCand_tlv.SetPtEtaPhiM(tree->PFCand_pt[i_pf],tree->PFCand_eta[i_pf],tree->PFCand_phi[i_pf],tree->PFCand_mass[i_pf]);
-	  float dR_KFromB = PFCand_tlv.DeltaR(gen_KFromB_tlv);
-	  if(dR_KFromB<0.1 && (best_dR_KFromB<0. || dR_KFromB<best_dR_KFromB)){
-	    _PFCand_genKFromB_index = i_pf;
-	    best_dR_KFromB = dR_KFromB;
-	  }
-	}
-	*/
-
+            
+	int nGenPart = tree->nGenPart;
+            
 	//Gen muon pt filter on tag
 	bool isTagMuonHighPt = false;
 	for(int i_gen=0; i_gen<nGenPart; i_gen++){
@@ -811,7 +669,7 @@ int main(int argc, char **argv){
 	  //exclude the gen muons that are from the chosen B
 	  if(!isEleFinalState && 
 	     (i_gen == _GenPart_lep1FromB_index || i_gen == _GenPart_lep2FromB_index)) continue;
-	  	  
+	  
 	  TLorentzVector gen_tagMu_tlv;
 	  gen_tagMu_tlv.SetPtEtaPhiM(tree->GenPart_pt[i_gen],
 				     tree->GenPart_eta[i_gen],
@@ -821,44 +679,23 @@ int main(int argc, char **argv){
 	  //In case there are several copies of same muon (with FSR for instance)
 	  if(gen_tagMu_tlv.DeltaR(gen_lep1FromB_tlv) > 0.01 && gen_tagMu_tlv.DeltaR(gen_lep2FromB_tlv) > 0.01 &&
 	     gen_tagMu_tlv.Pt() > genMuPtCut && gen_tagMu_tlv.Pt() > _BToKstll_gen_muonTag_hpT){
+                    
 	    _BToKstll_gen_muonTag_hpT = gen_tagMu_tlv.Pt();
 	    _Muon_probe_index = i_gen;
 	    isTagMuonHighPt = true;
-	    //break;
-	  }
-	}
-	if(!isTagMuonHighPt) continue; //Skip events where the gen filter in MC has been applied to the probe muon
-      }
-
-
-      
-      //Require tag muon non matched to gen muons that are from B
-      /*    
-      if(!isEleFianlState && !isLeptonTrack){
-	bool isTagMuonSoftID = false;
-	for(int i_mu=0; i_mu<nMuon; ++i_mu){
-	  if(i_mu == _Lep_mu1FromB_index || i_mu==_Muon_mu2FromB_index) continue;
-	  if(tree->Muon_softId[i_mu] && tree->Muon_pt[i_mu] > 8.){
-	    isProbeMuonSoftID = true;
-	    _Muon_selgen_index = i_mu;
 	    break;
 	  }
-	  
 	}
-	if(!isProbeMuonSoftID) continue; //Skip events where there is no probe muon passing the soft ID
-      }
-      */
-    }
-
-
-    /*
-    if(isMC == 0){
-      _Muon_probe_index = _Muon_sel_index;
-    }
-    */
+            
+	if(isTagMuonHighPt) break; //Skip events where the gen filter in MC has been applied to the probe muon
+                
+        }
+      
+    }//MC
     
     tree_new->Fill();
-  }
+ 
+  }//nentries
 
 
   f_new->cd();
