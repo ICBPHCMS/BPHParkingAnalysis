@@ -44,12 +44,20 @@ public :
    int BToKEE_l2Idx[kBToKEEMax];
    int BToKEE_kIdx[kBToKEEMax];
    float BToKEE_svprob[kBToKEEMax];
+   float BToKEE_pt[kBToKEEMax];
+   float BToKEE_cos2D[kBToKEEMax];
+   float BToKEE_l_xy[kBToKEEMax];
+   float BToKEE_l_xy_unc[kBToKEEMax];
    
    uint nBToKMuMu;
    int BToKMuMu_l1Idx[kBToKMuMuMax];
    int BToKMuMu_l2Idx[kBToKMuMuMax];
    int BToKMuMu_kIdx[kBToKMuMuMax];
-   float BToKMuMu_svprob[kBToKMuMuMax];   
+   float BToKMuMu_svprob[kBToKMuMuMax];
+   float BToKMuMu_pt[kBToKMuMuMax];
+   float BToKMuMu_cos2D[kBToKMuMuMax];
+   float BToKMuMu_l_xy[kBToKMuMuMax];
+   float BToKMuMu_l_xy_unc[kBToKMuMuMax];   
    
    uint nProbeTracks;
    float ProbeTracks_pt[kProbeTracksMax];
@@ -182,6 +190,10 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("BToKEE_l2Idx",&BToKEE_l2Idx);
     _tree->SetBranchAddress("BToKEE_kIdx",&BToKEE_kIdx);
     _tree->SetBranchAddress("BToKEE_svprob",&BToKEE_svprob);
+    _tree->SetBranchAddress("BToKEE_pt",&BToKEE_pt);
+    _tree->SetBranchAddress("BToKEE_cos2D",&BToKEE_cos2D);
+    _tree->SetBranchAddress("BToKEE_l_xy",&BToKEE_l_xy);
+    _tree->SetBranchAddress("BToKEE_l_xy_unc",&BToKEE_l_xy_unc);
   }
 
   
@@ -191,6 +203,10 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("BToKMuMu_l2Idx",&BToKMuMu_l2Idx);
     _tree->SetBranchAddress("BToKMuMu_kIdx",&BToKMuMu_kIdx);
     _tree->SetBranchAddress("BToKMuMu_svprob",&BToKMuMu_svprob);
+    _tree->SetBranchAddress("BToKMuMu_pt",&BToKEE_pt);
+    _tree->SetBranchAddress("BToKMuMu_cos2D",&BToKEE_cos2D);
+    _tree->SetBranchAddress("BToKMuMu_l_xy",&BToKEE_l_xy);
+    _tree->SetBranchAddress("BToKMuMu_l_xy_unc",&BToKEE_l_xy_unc);    
   }  
 
   
