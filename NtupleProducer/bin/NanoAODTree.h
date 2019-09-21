@@ -66,7 +66,7 @@ public :
    float ProbeTracks_mass[kProbeTracksMax];
    int ProbeTracks_pdgId[kProbeTracksMax];
    float ProbeTracks_DCASig[kProbeTracksMax];
-   float ProbeTracks_vz[kProbeTracksMax];
+   float ProbeTracks_dz[kProbeTracksMax];
    int ProbeTracks_isMatchedToEle[kProbeTracksMax];
    int ProbeTracks_isMatchedToMuon[kProbeTracksMax];
    int ProbeTracks_genPartIdx[kProbeTracksMax];
@@ -76,7 +76,7 @@ public :
    float TriggerMuon_eta[kTriggerMuonMax];
    float TriggerMuon_phi[kTriggerMuonMax];
    float TriggerMuon_mass[kTriggerMuonMax];
-   float TriggerMuon_vz[kTriggerMuonMax]; 
+   float TriggerMuon_dz[kTriggerMuonMax]; 
       
    uint nElectron;
    int Electron_charge[kElectronMax];
@@ -85,7 +85,7 @@ public :
    float Electron_phi[kElectronMax];
    float Electron_mass[kElectronMax];
    float Electron_dxy[kElectronMax];
-   float Electron_vz[kElectronMax];
+   float Electron_dz[kElectronMax];
    int Electron_isPFoverlap[kElectronMax];
    int Electron_isPF[kElectronMax];
    int Electron_isLowPt[kElectronMax];
@@ -98,7 +98,7 @@ public :
    float Muon_phi[kMuonMax];
    float Muon_mass[kMuonMax];
    float Muon_dxy[kMuonMax];
-   float Muon_vz[kMuonMax];
+   float Muon_dz[kMuonMax];
    int Muon_isTriggering[kMuonMax];
    int Muon_isPFcand[kMuonMax];
    float Muon_pfRelIso04_all[kMuonMax];
@@ -162,7 +162,7 @@ void NanoAODTree::Init(TChain* tree)
   _tree->SetBranchAddress("Muon_phi",&Muon_phi);
   _tree->SetBranchAddress("Muon_mass",&Muon_mass);
   _tree->SetBranchAddress("Muon_dxy",&Muon_dxy);
-  _tree->SetBranchAddress("Muon_vz",&Muon_vz);
+  _tree->SetBranchAddress("Muon_dz",&Muon_dz);
   _tree->SetBranchAddress("Muon_isTriggering",&Muon_isTriggering);
   _tree->SetBranchAddress("Muon_isPFcand",&Muon_isPFcand);
   _tree->SetBranchAddress("Muon_pfRelIso04_all",&Muon_pfRelIso04_all);
@@ -177,7 +177,7 @@ void NanoAODTree::Init(TChain* tree)
   _tree->SetBranchAddress("Electron_phi",&Electron_phi);
   _tree->SetBranchAddress("Electron_mass",&Electron_mass);
   _tree->SetBranchAddress("Electron_dxy",&Electron_dxy);
-  _tree->SetBranchAddress("Electron_vz",&Electron_vz);
+  _tree->SetBranchAddress("Electron_dz",&Electron_dz);
   _tree->SetBranchAddress("Electron_isPFoverlap",&Electron_isPFoverlap);
   _tree->SetBranchAddress("Electron_isPF",&Electron_isPF);
   _tree->SetBranchAddress("Electron_isLowPt",&Electron_isLowPt);
@@ -218,7 +218,7 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("ProbeTracks_mass",&ProbeTracks_mass);
     _tree->SetBranchAddress("ProbeTracks_pdgId",&ProbeTracks_pdgId);
     _tree->SetBranchAddress("ProbeTracks_DCASig",&ProbeTracks_DCASig);
-    _tree->SetBranchAddress("ProbeTracks_vz",&ProbeTracks_vz);
+    _tree->SetBranchAddress("ProbeTracks_dz",&ProbeTracks_dz);
     _tree->SetBranchAddress("ProbeTracks_isMatchedToEle",&ProbeTracks_isMatchedToEle);
     _tree->SetBranchAddress("ProbeTracks_isMatchedToMuon",&ProbeTracks_isMatchedToMuon);
     _tree->SetBranchAddress("ProbeTracks_genPartIdx",&ProbeTracks_genPartIdx);
@@ -231,7 +231,7 @@ void NanoAODTree::Init(TChain* tree)
     _tree->SetBranchAddress("TriggerMuon_eta",&TriggerMuon_eta);
     _tree->SetBranchAddress("TriggerMuon_phi",&TriggerMuon_phi);
     _tree->SetBranchAddress("TriggerMuon_mass",&TriggerMuon_mass);
-    _tree->SetBranchAddress("TriggerMuon_vz",&TriggerMuon_vz);
+    _tree->SetBranchAddress("TriggerMuon_dz",&TriggerMuon_dz);
   }  
 
 
