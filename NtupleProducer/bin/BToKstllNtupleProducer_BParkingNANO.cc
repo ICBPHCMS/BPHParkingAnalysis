@@ -358,14 +358,14 @@ int main(int argc, char **argv){
 	  float dR_lep2FromTrMu = lep2_tlv.DeltaR(TriggerMuon_tlv);   
 	  float dR_kaonFromTrMu = kaon_tlv.DeltaR(TriggerMuon_tlv);
         
-	  float l1_vz = (isEleCh == 1) ? tree->Electron_vz[l1_Index] : tree->Muon_vz[l1_Index];
-	  float l2_vz = (isEleCh == 1) ? tree->Electron_vz[l2_Index] : tree->Muon_vz[l2_Index];
+	  float l1_dz = (isEleCh == 1) ? tree->Electron_dz[l1_Index] : tree->Muon_dz[l1_Index];
+	  float l2_dz = (isEleCh == 1) ? tree->Electron_dz[l2_Index] : tree->Muon_dz[l2_Index];
 
-	  //On each triplet object require dR>0.4 and vz<1
+	  //On each triplet object require dR>0.4 and dz<1
 	  if( dR_lep1FromTrMu < 0.03 || dR_lep2FromTrMu < 0.03 || dR_kaonFromTrMu < 0.03 || 
-	      std::abs(tree->TriggerMuon_vz[i_mu] - l1_vz) > 1. || 
-	      std::abs(tree->TriggerMuon_vz[i_mu] - l2_vz) > 1. || 
-	      std::abs(tree->TriggerMuon_vz[i_mu] - tree->ProbeTracks_vz[kaon_Index]) > 1. ) continue;        
+	      std::abs(tree->TriggerMuon_dz[i_mu] - l1_dz) > 1. || 
+	      std::abs(tree->TriggerMuon_dz[i_mu] - l2_dz) > 1. || 
+	      std::abs(tree->TriggerMuon_dz[i_mu] - tree->ProbeTracks_dz[kaon_Index]) > 1. ) continue;        
 
 	  if(isEleCh == 1) _Muon_tag_index_KEE[i_Btree] = i_mu;
 	  else _Muon_tag_index_KMuMu[i_Btree] = i_mu;
@@ -388,7 +388,7 @@ int main(int argc, char **argv){
 	if( B_CL_vtx < 0.1 ) continue;
 	if((tree->ProbeTracks_pt[kaon_Index] < 1.5 || B_pt < 10.)) continue;
 	if(B_cos2D < 0.999) continue;
-	if(B_l_xy/B_l_xy_unc < 6.) continue;        
+	if(B_l_xy/sqrt(B_l_xy_unc) < 6.) continue;        
       
 	B_vtxCL_idx_val.push_back(std::pair<int, float>(i_Btree, B_CL_vtx));
       
